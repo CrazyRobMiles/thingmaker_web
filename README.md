@@ -1,11 +1,15 @@
 # thingmaker (web)
 
 Design 3D-printable enclosures for electronics by placing devices on the
-surfaces of cases, in a web browser. This is a Node.js port of the Python
-thingmaker: a server that holds the design model and the
-geometry kernel, and a page that shows the real, printable parts as you work
-and writes them out as STL files. Designs are kept as JSON files on the
-server's disk.
+surfaces of cases, in a web browser. This is a JavaScript port of the Python
+thingmaker, the editor showing the real, printable parts as you work and
+writing them out as STL files. It comes two ways, sharing all the same code:
+
+- **The Node version**: a server (`node server.js`) holding the design model
+  and the geometry kernel, with designs kept on the server's disk.
+- **The web version**: a static site (for GitHub Pages, say) that runs
+  everything in the browser - Chrome or Edge - working in a folder on the
+  computer the browser's on. See [The web version](#the-web-version).
 
 **The design files are the Python thingmaker's.** Either program opens and
 saves the other's designs, and a design saved by one is byte-for-byte the
@@ -46,6 +50,14 @@ Where things are kept:
   point it at the Python thingmaker's `subassemblies/` to share them.
 - **Pictures** for decorations: anywhere on disk; the Browse dialog can also
   upload one from the computer the browser is on into `images/`.
+- **Fonts** for engraved text: the ones installed on the computer, and any
+  in `fonts/`. That has the free Liberation Sans, Serif and Mono (SIL Open
+  Font License, `fonts/LICENSE-Liberation.txt`), which stand in for Arial,
+  Times New Roman and Courier New where those aren't installed - on a
+  Raspberry Pi, say, or in the web version. They have the same widths,
+  letter for letter, so text lays out the same, though the letters' shapes
+  differ a little (engraved text's volume is within a couple of percent).
+  Design files still name `arial`, so they're unchanged.
 - **Build output**: `output/<design file name>/`.
 
 ### The editor
@@ -75,6 +87,14 @@ views, and the view options **Layout**, **Lids** and **Built model**.
 - **Print parts** shows the printable parts side by side - this design's,
   or any STL file or folder chosen with **File > Open STL files**, reloaded
   when the files change.
+- **Getting work back:** the design is saved in the browser a moment after
+  every change, so if the tab is closed or the browser crashes with changes
+  unsaved, they're offered back next time. Every Save also keeps a copy:
+  **File > Earlier versions...** goes back to one (as unsaved changes, so
+  undo returns to what was there). The last 50 saves of each design are
+  kept. This is a safety net beside the design files, not instead of them -
+  it lives in this browser only. Keeping your designs folder in git is the
+  best backup of all.
 
 Build output goes to `output/<design file name>/`:
 
@@ -82,6 +102,131 @@ Build output goes to `output/<design file name>/`:
 - `assembled/<part>.stl` holds each part where it sits in the assembled design.
 - `design.json` is the design as built; `manifest.json` records each part's
   solid count, volume and validity, and the hinge check.
+
+## The web version
+
+The same editor, as a static site with no server: everything - the design
+model, the geometry kernel, the live model and Build - runs in the browser,
+in Web Workers. It needs **Chrome or Edge** (desktop, including Chromium on
+a Raspberry Pi), which let a page work in a folder on the computer.
+
+### Deploying it
+
+The site is built from this repository into `site/`, which isn't kept in
+git - build it wherever you clone the repository. Building needs Node.js 18
+or later (20 is what it's tested with); running it needs only a static web
+server and the browser.
+
+```
+npm ci                    # once, after cloning (or when package.json changes)
+npm run build:static      # builds it into site/ (about 27 MB)
+npm run serve:static      # serves site/ at http://localhost:8600/ - Ctrl+C stops it
+```
+
+Build again after changing the code or the examples; the browser picks up
+the new version when the page is reloaded.
+
+**Browsers only let a page work in a folder if the page is secure:** served
+over `https://`, or from `localhost` on the same computer. A page from
+another computer on your network over plain `http://`
+(`http://192.168.1.20:8600`, say) can't open folders - thingmaker says so
+when it starts. So serve the site on the computer that's using it, or over
+https.
+
+**On this computer:** `npm run serve:static` and open
+http://localhost:8600/ in Chrome or Edge. (It only answers this computer.
+`node tools/serve-static.mjs --port 9000` picks another port.) VS Code's
+Live Server (Go Live) works too: open `site/index.html` and Go Live. It
+reloads the page whenever a file in the workspace changes, so if your
+thingmaker folder is inside the workspace, set
+`"liveServer.settings.ignoreFiles"` to leave out `designs/**`, `output/**`
+and the rest, or every Save and Build reloads the page.
+
+**On a Raspberry Pi (4 or 5, Raspberry Pi OS desktop):**
+
+```
+sudo apt install nodejs npm      # or Node 20 from nodesource.com, if apt's is older than 18
+git clone <this repository> thingmaker_web
+cd thingmaker_web
+npm ci
+npm run build:static
+npm run serve:static
+```
+
+Then open http://localhost:8600/ in Chromium, and choose the cloned
+repository as thingmaker's folder - it has `designs/`, `subassemblies/`,
+`images/` and `fonts/` already, and builds go to `output/`, which git
+ignores. (Without Node on the Pi: build on another computer, copy `site/`
+across, and serve it with `python3 -m http.server 8600` in that folder.)
+
+**For testing from another computer on your network**, without https: on
+the computer with the browser, open
+`chrome://flags/#unsafely-treat-insecure-origin-as-secure` (`edge://flags/...`
+in Edge), add the site's address (`http://192.168.1.20:8600`), enable it and
+relaunch the browser. That address is then treated as secure. (The server
+has to answer the network for this: `python3 -m http.server 8600` in
+`site/` does, `npm run serve:static` doesn't.) Use this for testing only.
+
+**On GitHub Pages**, over https, for any computer:
+
+1. Push this repository to GitHub.
+2. In the repository's **Settings > Pages**, set **Source** to **GitHub
+   Actions**.
+3. Every push to `main` then runs `.github/workflows/pages.yml`: it
+   installs, runs the tests, builds `site/` and publishes it. (**Actions >
+   Publish the web version > Run workflow** runs it by hand.) The
+   repository's **Actions** tab shows how it went; a failing test stops
+   it publishing.
+4. The site is at `https://<you>.github.io/<repository>/` (the Pages
+   settings show the address).
+
+Pages sites are public even when the repository is private (unless your
+GitHub plan has private Pages), but there's nothing private in the site -
+your designs stay in your folder, on your computer.
+
+**On any other web server:** copy the contents of `site/` there. It must be
+served over https, and `.wasm` files must be served as `application/wasm`
+(most servers do). It needs no special headers and no server code, and
+works from a sub-folder (`https://example.com/thingmaker/`).
+
+Each address the site is served from (localhost:8600, Live Server's port,
+GitHub Pages) is a separate site to the browser: it asks for the folder
+again, and keeps its own autosaves and earlier versions.
+
+**Its folder:** the first time, it asks you to choose your thingmaker
+folder, laid out as the Python thingmaker's is - `designs/`,
+`subassemblies/`, `images/`, `fonts/` and `output/`. Your thingmaker
+repository is just right; choose an empty folder and it's set up with the
+examples. The browser asks to let the site see and change the files in that
+folder (and nothing else); it's remembered, and Chrome and Edge can be told
+to allow it on every visit. **File > Change folder...** picks another one.
+Designs, built STLs and templates are ordinary files in that folder, so the
+Python thingmaker and the Node version can work on the same ones.
+
+- **Fonts** are the ones in the folder's `fonts/` (a web page can't read
+  the system's fonts folder) and the free ones the site comes with (below).
+  To engrave with the very fonts the Python version uses, **File >
+  Fonts...** copies this computer's into `fonts/`: Chrome and Edge ask to
+  let the site see the installed fonts, then copy the ones you tick, named
+  as Windows names their files (`arial.ttf`, `arialbd.ttf`), as design
+  files name them. Fonts that are added are used once thingmaker starts
+  again (it offers to).
+- **Pictures**: a design names its pictures by path - often a Windows path,
+  `D:\GitHub\thingmaker\images\overhead.png`. The web version looks for
+  them in the folder: at that path's end (`images/overhead.png`), or failing
+  that in `images/`. Pictures you add are copied into `images/` and written
+  into the design relative to the folder (`images/x.png`), or, if you've
+  given the folder's path on this computer when choosing it, as a full path
+  the Python thingmaker finds too.
+- **Recovery** is as in the Node version (autosave and earlier versions),
+  in this browser.
+- **Security:** the site can read and change everything in the folder you
+  give it, so give it just your thingmaker folder, keep that in git, and
+  publish the site from a place only you can change. All the site's pages
+  share the browser's permission: on GitHub Pages every repository under
+  `you.github.io` is the same site, so a custom domain (or an account of its
+  own) keeps thingmaker's apart from anything else you publish there.
+- **Speed:** builds run on one processor core, as in the Node version.
 
 ## What a design holds
 
@@ -240,9 +385,12 @@ Both programs read and write the same files:
 
 | File | Role |
 | --- | --- |
-| `server.js` | The editor's web server and API |
+| `server.js` | The Node version's web server |
 | `build.js`, `template.js` | Command-line builds and templates |
-| `public/` | The editor page: `js/app.js` (state and commands), `js/scene.js` (the 3D view), `js/props.js` (the properties panel), `js/dialogs.js` |
+| `public/` | The editor page (both versions): `js/app.js` (state and commands), `js/scene.js` (the 3D view), `js/props.js` (the properties panel), `js/dialogs.js`, `js/recovery.js` (autosave and earlier versions), `js/api.js` (talking to the server) |
+| `static/` | The web version's own parts: `api.js` (in place of `public/js/api.js`), `folder.js` (choosing the folder), `engine-worker.js` and `build-worker.js` |
+| `lib/api.js` | The editor's requests, answered by the server or the web version's engine worker |
+| `lib/files-node.js`, `lib/files-browser.js` | File access (imported as `#files`): Node's, or the web version's copy of its folder |
 | `lib/design.js` | The JSON model, frames, layout and problems |
 | `lib/edits.js`, `lib/view.js` | The editor's edits, and what the page draws |
 | `lib/devices.js`, `lib/subassemblies.js`, `lib/catalogue.js` | Devices and subassemblies |
@@ -252,3 +400,4 @@ Both programs read and write the same files:
 | `lib/kernel.js`, `lib/geom.js`, `lib/stl.js`, `lib/meshes.js` | The geometry kernel and maths |
 | `lib/py.js` | The Python behaviours the files depend on |
 | `tools/parity.mjs` | Checks this against the Python thingmaker |
+| `tools/build-static.mjs`, `tools/serve-static.mjs` | Build the web version into `site/`, and serve it locally |

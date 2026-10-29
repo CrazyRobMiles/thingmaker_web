@@ -151,3 +151,5 @@ vite.config.ts.timestamp-*
 # thingmaker: build output and pictures/STLs uploaded through the editor
 output/
 uploads/
+# the web version, built by npm run build:static
+site/

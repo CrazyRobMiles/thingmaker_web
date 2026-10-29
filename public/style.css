@@ -214,6 +214,8 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .modal .form { display: grid; grid-template-columns: max-content minmax(240px, 1fr); gap: 6px 10px; align-items: center; }
 .modal .form .wide { grid-column: 1 / -1; }
 .modal .note { color: var(--muted); font-size: 12px; max-width: 480px; }
+.modal .font-list { max-height: 260px; overflow-y: auto; border: 1px solid var(--border); padding: 4px 6px; }
+.modal .font-list .checkrow { display: flex; align-items: center; gap: 6px; margin: 2px 0; cursor: pointer; }
 .modal .error { color: var(--danger); }
 
 /* file browser */

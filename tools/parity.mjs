@@ -3,7 +3,7 @@
 folder, both load it, lay it out and save it again (the files must be
 identical), list its problems (the same), and build it (the same parts,
 each the same number of solids and the same volume to within 0.01%, and the
-same hinge check).
+same hinge check). Both use the Python thingmaker's subassemblies/.
 
     node tools/parity.mjs PYTHON_THINGMAKER_FOLDER [DESIGNS_FOLDER] [--no-build]
 
@@ -13,9 +13,6 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { build } from "../lib/builder.js";
-import { Design } from "../lib/design.js";
-import * as kernel from "../lib/kernel.js";
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const args = process.argv.slice(2).filter((a) => !a.startsWith("--"));
@@ -25,6 +22,11 @@ if (!args.length) {
   process.exit(2);
 }
 const pythonRepo = path.resolve(args[0]);
+// Both use the Python thingmaker's subassemblies, so they build the same things.
+process.env.THINGMAKER_SUBASSEMBLIES = path.join(pythonRepo, "subassemblies");
+const { build } = await import("../lib/builder.js");
+const { Design } = await import("../lib/design.js");
+const kernel = await import("../lib/kernel.js");
 const designsDir = path.resolve(args[1] || path.join(ROOT, "designs"));
 const work = fs.mkdtempSync(path.join(os.tmpdir(), "thingmaker-parity-"));
 

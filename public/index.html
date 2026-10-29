@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>thingmaker</title>
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
 <script type="importmap">
 {
   "imports": {
@@ -24,11 +24,15 @@
       <button type="button" data-action="open">Open...<span class="key">Ctrl+O</span></button>
       <button type="button" data-action="save">Save<span class="key">Ctrl+S</span></button>
       <button type="button" data-action="save-as">Save As...<span class="key">Ctrl+Shift+S</span></button>
+      <button type="button" data-action="earlier-versions">Earlier versions...</button>
       <hr>
       <button type="button" data-action="open-stl">Open STL files...</button>
       <hr>
       <button type="button" data-action="new-subassembly">New subassembly...</button>
       <button type="button" data-action="edit-subassembly">Edit subassembly...</button>
+      <hr data-action-group="folder" hidden>
+      <button type="button" data-action="fonts" hidden>Fonts...</button>
+      <button type="button" data-action="change-folder" hidden>Change folder...</button>
     </div>
   </div>
   <span class="sep"></span>
@@ -80,6 +84,6 @@
 <div id="context-menu" class="popup" hidden></div>
 <div id="modal-root"></div>
 
-<script type="module" src="/js/app.js"></script>
+<script type="module" src="js/app.js"></script>
 </body>
 </html>

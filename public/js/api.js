@@ -45,6 +45,22 @@ export async function liveBuild(design) {
   return { parts, problems: header.problems };
 }
 
+/** Follow a build: handlers.line(text) for each line of its log, then
+handlers.end({result: "built" | "failed" | "stopped", problems, outDir}). */
+export function buildEvents(id, handlers) {
+  const source = new EventSource(`/api/build/events?id=${encodeURIComponent(id)}`);
+  let ended = false;
+  source.addEventListener("line", (e) => handlers.line(JSON.parse(e.data)));
+  source.addEventListener("end", (e) => {
+    ended = true;
+    source.close();
+    handlers.end(JSON.parse(e.data));
+  });
+  source.onerror = () => {
+    if (!ended && source.readyState === EventSource.CLOSED) handlers.end({ result: "failed" });
+  };
+}
+
 /** An STL file on the server, as an ArrayBuffer. */
 export async function stlFile(path) {
   const response = await fetch(`/api/stl?${new URLSearchParams({ path })}`);

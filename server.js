@@ -18,21 +18,13 @@ import http from "node:http";
 import os from "node:os";
 import path from "node:path";
 import { Worker } from "node:worker_threads";
-import { defaultOutputDir } from "./lib/builder.js";
+import { createApi, folders, saveUpload } from "./lib/api.js";
 import * as catalogue from "./lib/catalogue.js";
 import { Design, DesignError } from "./lib/design.js";
-import { applyEdit, subassemblyChanged } from "./lib/edits.js";
 import * as kernel from "./lib/kernel.js";
-import * as stl from "./lib/stl.js";
 import * as subassemblies from "./lib/subassemblies.js";
-import { placementTemplate, templatePath } from "./lib/template.js";
-import { meta, view } from "./lib/view.js";
 
 const ROOT = subassemblies.REPO_ROOT;
-const DESIGNS_DIR = process.env.THINGMAKER_DESIGNS || path.join(ROOT, "designs");
-const OUTPUT_DIR = path.join(ROOT, "output");
-const IMAGES_DIR = path.join(ROOT, "images");
-const UPLOADS_DIR = path.join(ROOT, "uploads");
 const PUBLIC_DIR = path.join(ROOT, "public");
 const THREE_DIR = path.join(ROOT, "node_modules", "three");
 
@@ -107,33 +99,6 @@ function stat(file) {
   } catch (e) {
     return null;
   }
-}
-
-/** A design dict as the editor gets it, with its view. */
-function present(design) {
-  return { design: design.to_dict(), view: view(design) };
-}
-
-function outputDirFor(designPath) {
-  return designPath ? defaultOutputDir(designPath) : path.join(OUTPUT_DIR, "untitled");
-}
-
-const IMAGE_EXTS = [".png", ".jpg", ".jpeg", ".bmp", ".gif"];
-
-function listDir(dir, filter) {
-  const entries = [];
-  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name.startsWith(".")) continue;
-    const full = path.join(dir, entry.name);
-    let isDir = entry.isDirectory();
-    if (entry.isSymbolicLink()) isDir = Boolean(stat(full)?.isDirectory());
-    const ext = path.extname(entry.name).toLowerCase();
-    const wanted = filter === "json" ? ext === ".json" : filter === "stl" ? ext === ".stl"
-      : filter === "image" ? IMAGE_EXTS.includes(ext) : filter === "dir" ? false : true;
-    if (isDir || wanted) entries.push({ name: entry.name, path: full, dir: isDir });
-  }
-  entries.sort((a, b) => (b.dir - a.dir) || a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
-  return entries;
 }
 
 function drives() {
@@ -260,87 +225,22 @@ function startBuild(design, designPath) {
   return run;
 }
 
-// -- the API --
+/// -- the API (lib/api.js), plus what only a server does --
 
-const snapshotCache = new Map(); // output dir -> [manifest mtime, snapshot dict or null]
+const where = folders(ROOT, process.env.THINGMAKER_DESIGNS || null);
+const routes = createApi(where, {
+  places: [["Designs", where.designs], ["Output", where.output], ["Pictures", where.images],
+    ["Subassemblies", where.subassemblies], ["Uploads", where.uploads], ["Home", os.homedir()]],
+  drives,
+  onSubassemblySaved: () => askWorker({ reload: true }),
+});
+const outputDirFor = routes.outputDirFor;
 
-const routes = {
+Object.assign(routes, {
   "GET /api/startup": () => {
     const s = startPath ? stat(startPath) : null;
     if (s && (s.isDirectory() || startPath.toLowerCase().endsWith(".stl"))) return { stlSource: startPath };
-    return { designPath: startPath, designsDir: DESIGNS_DIR };
-  },
-
-  "GET /api/meta": () => meta(),
-
-  "POST /api/new": ({ body }) => present(new Design({ name: String(body.name || "").trim() || "Untitled" })),
-
-  "POST /api/open": ({ body }) => {
-    const file = path.resolve(String(body.path));
-    return { ...present(Design.load(file)), path: file };
-  },
-
-  "POST /api/view": ({ body }) => present(Design.from_dict(body.design)),
-
-  "POST /api/edit": ({ body }) => {
-    const result = applyEdit(body.design, body.edit);
-    return { ok: result.ok, message: result.message || null, select: result.select || null, fit: Boolean(result.fit),
-      ...present(result.design) };
-  },
-
-  "POST /api/save": ({ body }) => {
-    let file = path.resolve(String(body.path));
-    if (!path.extname(file)) file += ".json";
-    const design = Design.from_dict(body.design);
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    design.save(file);
-    return { path: file };
-  },
-
-  "GET /api/paths": ({ query }) => {
-    const designPath = query.get("path") || null;
-    return { outputDir: outputDirFor(designPath), designsDir: DESIGNS_DIR, sep: path.sep, imagesDir: IMAGES_DIR,
-      outputRoot: OUTPUT_DIR, subassembliesDir: subassemblies.SUBASSEMBLIES_DIR };
-  },
-
-  "GET /api/browse": ({ query }) => {
-    const filter = query.get("filter") || "";
-    let dir = query.get("dir");
-    if (!dir) dir = filter === "image" ? IMAGES_DIR : filter === "stl" ? OUTPUT_DIR : DESIGNS_DIR;
-    dir = path.resolve(dir);
-    while (!stat(dir)?.isDirectory()) {
-      const up = path.dirname(dir);
-      if (up === dir) break;
-      dir = up;
-    }
-    const parent = path.dirname(dir) === dir ? null : path.dirname(dir);
-    const places = [["Designs", DESIGNS_DIR], ["Output", OUTPUT_DIR], ["Pictures", IMAGES_DIR],
-      ["Subassemblies", subassemblies.SUBASSEMBLIES_DIR], ["Uploads", UPLOADS_DIR], ["Home", os.homedir()]]
-      .filter(([, p]) => stat(p)?.isDirectory());
-    return { dir, parent, entries: listDir(dir, filter), places, drives: drives(), sep: path.sep };
-  },
-
-  "GET /api/buildstate": ({ query }) => {
-    const designPath = query.get("path");
-    if (!designPath) return { manifestMtime: null };
-    const outDir = outputDirFor(designPath);
-    const manifest = stat(path.join(outDir, "manifest.json"));
-    if (!manifest) return { manifestMtime: null };
-    const mtime = manifest.mtimeMs;
-    const cached = snapshotCache.get(outDir);
-    if (!cached || cached[0] !== mtime) {
-      let snapshot = {};
-      const snapshotPath = path.join(outDir, "design.json");
-      try {
-        snapshot = stat(snapshotPath) ? Design.load(snapshotPath).to_dict() : {};
-      } catch (e) {
-        snapshot = {};
-      }
-      snapshotCache.set(outDir, [mtime, snapshot]);
-    }
-    const known = Number(query.get("known"));
-    if (known === mtime) return { manifestMtime: mtime };
-    return { manifestMtime: mtime, snapshot: snapshotCache.get(outDir)[1] };
+    return { designPath: startPath, designsDir: where.designs };
   },
 
   "POST /api/build": ({ body }) => {
@@ -358,58 +258,11 @@ const routes = {
     }
     return { ok: true };
   },
-
-  "POST /api/template": ({ body }) => {
-    const design = Design.from_dict(body.design);
-    const spec = design.placement(body.placement);
-    let file = body.path ? path.resolve(String(body.path)) : templatePath(outputDirFor(body.designPath || null), spec);
-    if (!path.extname(file)) file += ".stl";
-    fs.mkdirSync(path.dirname(file), { recursive: true });
-    kernel.writeStl(placementTemplate(design, spec), file);
-    return { path: file };
-  },
-
-  "GET /api/stls": ({ query }) => {
-    const source = path.resolve(String(query.get("path")));
-    const s = stat(source);
-    let files = [];
-    if (s?.isDirectory()) files = fs.readdirSync(source).filter((n) => n.toLowerCase().endsWith(".stl")).sort().map((n) => path.join(source, n));
-    else if (s?.isFile()) files = [source];
-    return { files: files.map((f) => ({ name: path.basename(f).replace(/\.[^.]*$/, ""), path: f, mtime: stat(f)?.mtimeMs ?? null })) };
-  },
-
-  "GET /api/stlbounds": ({ query }) => ({ bounds: stl.bounds(path.resolve(String(query.get("path")))) }),
-
-  "GET /api/subassembly": ({ query }) => {
-    const cls = catalogue.CATALOG[query.get("name")];
-    if (!cls || !cls.SPEC || !cls.SPEC.name) throw new DesignError(`No subassembly ${query.get("name")}`);
-    return { spec: cls.SPEC };
-  },
-
-  "POST /api/subassembly/save": async ({ body }) => {
-    const name = String(body.name || "").trim();
-    if (!body.overwrite && name in catalogue.CATALOG) throw new Error(`there is already a device or subassembly called ${name}`);
-    const folder = catalogue.createSubassembly(name, String(body.mock || "").trim(), {
-      cutouts: body.cutouts || [], mountings: body.mountings || {}, displayName: String(body.displayName || "").trim() || name,
-      description: String(body.description || "").trim(), overwrite: Boolean(body.overwrite),
-    });
-    await askWorker({ reload: true });
-    const out = { folder, meta: meta() };
-    if (body.design) Object.assign(out, kernel.scope(() => present(subassemblyChanged(body.design, name))));
-    return out;
-  },
-};
+});
 
 /** Raw uploads: the body is the file. */
 async function upload(req, res, query) {
-  const name = path.basename(String(query.get("name") || "upload")).replace(/[^A-Za-z0-9_. -]/g, "_");
-  const dir = query.get("to") === "images" ? IMAGES_DIR : UPLOADS_DIR;
-  fs.mkdirSync(dir, { recursive: true });
-  let file = path.join(dir, name);
-  const ext = path.extname(name);
-  for (let n = 2; stat(file); n++) file = path.join(dir, `${path.basename(name, ext)}_${n}${ext}`);
-  fs.writeFileSync(file, await readBody(req));
-  send(res, 200, { path: file });
+  send(res, 200, { path: saveUpload(where, query.get("name"), await readBody(req), query.get("to")) });
 }
 
 async function live(req, res) {
@@ -500,7 +353,7 @@ server.on("error", (e) => {
 });
 server.on("listening", () => {
   const url = `http://${host === "0.0.0.0" ? "localhost" : host}:${port}/`;
-  process.stdout.write(`thingmaker editor: ${url}\nDesigns: ${DESIGNS_DIR}\nPress Ctrl+C to stop.\n`);
+  process.stdout.write(`thingmaker editor: ${url}\nDesigns: ${where.designs}\nPress Ctrl+C to stop.\n`);
   if (Object.keys(catalogue.LOAD_ERRORS).length) process.stdout.write("Some subassembly folders couldn't be loaded (see above).\n");
   if (openBrowser) openInBrowser(url);
 });

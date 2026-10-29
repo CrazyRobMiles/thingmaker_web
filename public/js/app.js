@@ -7,6 +7,7 @@ import * as api from "./api.js";
 import * as dialogs from "./dialogs.js";
 import { el } from "./dialogs.js";
 import { renderProps, SNAP } from "./props.js";
+import * as recovery from "./recovery.js";
 import { View, matrix4, meshGeometry, parseStl, surfaceAt } from "./scene.js";
 import { fmtG, pyRound } from "/lib/py.js";
 
@@ -186,6 +187,7 @@ function refresh(rebuildProps = true) {
   if (rebuildProps) rebuildProps_();
   else updatePropValues();
   updateTitle();
+  recovery.note(state);
   const enable = (action, on) => {
     $(`[data-action="${action}"]`).disabled = !on;
   };
@@ -371,9 +373,17 @@ function propsContext() {
   return {
     design: state.design, view: state.view, meta: state.meta, selection: state.selection,
     change, select, addPlacementDialog, addPlacement, rotate: rotatePlacement, deleteSelected, rename, saveTemplate,
-    browsePicture: (current) => dialogs.browse({ title: "Choose a picture", filter: "image",
-      dir: current ? current.replace(/[\\/][^\\/]*$/, "") : null, upload: { accept: "image/*", to: "images" } }),
+    browsePicture,
   };
+}
+
+/** Choose a picture for a decoration: the path to put in the design. */
+async function browsePicture(current) {
+  const start = current && api.pictureFolder ? await api.pictureFolder(current) : current;
+  const chosen = await dialogs.browse({ title: "Choose a picture", filter: "image",
+    dir: start ? start.replace(/[\\/][^\\/]*$/, "") : null, upload: { accept: "image/*", to: "images" } });
+  // (The web version writes it so the Python thingmaker can find it too.)
+  return chosen && api.storedPicturePath ? api.storedPicturePath(chosen) : chosen;
 }
 
 function rebuildProps_() {
@@ -735,8 +745,59 @@ async function save() {
   }
   state.dirty = false;
   updateTitle();
+  recovery.note(state);
+  recovery.keepVersion(state.path, state.design);
   status(`Saved ${state.path}`, 4000);
   return true;
+}
+
+/** Offer to bring back changes that weren't saved when the editor was last
+closed (or crashed). Resolves true if they were. */
+async function offerUnsaved(saved) {
+  if (!saved) return false;
+  const where = saved.path ? saved.path.replace(/^.*[\\/]/, "") : "a design that hasn't been saved yet";
+  const when = new Date(saved.time).toLocaleString();
+  if (!(await dialogs.confirm("Unsaved changes", `When thingmaker was last closed, ${where} ("${saved.design.name}") had ` +
+    `changes that weren't saved (${when}). Bring them back?`, "Bring them back", "Discard them"))) {
+    return false;
+  }
+  try {
+    const res = await api.post("/api/view", { design: saved.design });
+    await resetState(res, saved.path || null);
+    state.undo = saved.undo || [];
+    state.dirty = true;
+    refresh();
+    status("Brought back the unsaved changes - save them to keep them", 8000);
+    return true;
+  } catch (e) {
+    await dialogs.message("Can't bring the changes back", e.message);
+    return false;
+  }
+}
+
+/** Go back to a version of this design kept when it was saved; it opens as
+unsaved changes (undo goes back to what was there). */
+async function earlierVersions() {
+  await commitPending();
+  const list = await recovery.versions(state.path);
+  if (!list.length) {
+    dialogs.message("Earlier versions", state.path ? "No earlier versions of this design have been kept yet - one is kept " +
+      "each time it's saved." : "Earlier versions are kept each time a design is saved; this one hasn't been saved yet.");
+    return;
+  }
+  const options = list.map((v, i) => [String(i), `${new Date(v.time).toLocaleString()} - ${v.name}`]);
+  const chosen = await dialogs.chooseFrom("Earlier versions", "Saved at", options);
+  if (chosen === null) return;
+  const version = list[Number(chosen)];
+  enqueue(async () => {
+    const res = await api.post("/api/view", { design: version.design });
+    state.undo.push(state.design);
+    state.redo = [];
+    setDesign(res.design, res.view);
+    state.dirty = true;
+    refresh();
+    status(`Back to the version saved ${new Date(version.time).toLocaleString()} - save it to keep it`, 8000);
+  });
 }
 
 async function saveAs() {
@@ -797,35 +858,28 @@ async function build() {
   $("#log").textContent = "";
   $("#log-panel").hidden = false;
   view3d.resize();
-  const source = new EventSource(`/api/build/events?id=${res.id}`);
-  state.build = { id: res.id, snapshot, source };
+  state.build = { id: res.id, snapshot };
   showBuildRunning(true);
   status("Writing the STL files... (Stop build to cancel)", 0);
-  source.addEventListener("line", (e) => logLine(JSON.parse(e.data)));
-  source.addEventListener("end", (e) => {
-    const result = JSON.parse(e.data);
-    source.close();
-    state.build = null;
-    showBuildRunning(false);
-    if (result.result === "stopped") {
-      logLine("Build stopped.");
-      status("Build stopped", 10000);
-    } else if (result.result !== "built") {
-      status("Build FAILED - see the build log", 10000, true);
-    } else {
-      for (const p of result.problems || []) logLine("WARNING: " + p);
-      state.builtSnapshot = snapshot;
-      updateBuiltLabel();
-      status(`Built: STL files in ${result.outDir}`, 10000);
-      pollFiles();
-    }
-  });
-  source.onerror = () => {
-    if (state.build && state.build.source === source && source.readyState === EventSource.CLOSED) {
+  api.buildEvents(res.id, {
+    line: logLine,
+    end: (result) => {
       state.build = null;
       showBuildRunning(false);
-    }
-  };
+      if (result.result === "stopped") {
+        logLine("Build stopped.");
+        status("Build stopped", 10000);
+      } else if (result.result !== "built") {
+        status("Build FAILED - see the build log", 10000, true);
+      } else {
+        for (const p of result.problems || []) logLine("WARNING: " + p);
+        state.builtSnapshot = snapshot;
+        updateBuiltLabel();
+        status(`Built: STL files in ${result.outDir}`, 10000);
+        pollFiles();
+      }
+    },
+  });
 }
 
 // -- the Print parts view and watched files --
@@ -972,8 +1026,24 @@ const ACTIONS = {
   "new-subassembly": newSubassembly, "edit-subassembly": editSubassembly,
   undo, redo, "add-case": addCaseDialog, "add-hinge": addHingeDialog,
   "add-device": () => addPlacementDialog("device"), "add-subassembly": () => addPlacementDialog("subassembly"),
-  delete: deleteSelected, build, fit,
+  delete: deleteSelected, build, fit, "earlier-versions": earlierVersions,
 };
+// The web version's own commands (choosing the folder it works in, and
+// putting fonts in it).
+if (api.changeFolder) {
+  ACTIONS["change-folder"] = async () => {
+    if (await confirmDiscard()) api.changeFolder();
+  };
+  ACTIONS.fonts = async () => {
+    if (!(await api.manageFonts())) return;
+    if (await dialogs.confirm("Fonts added", "thingmaker starts again to use them. Start again now?", "Start again", "Later")
+      && (await confirmDiscard())) {
+      state.dirty = false; // (saved, or to be discarded)
+      location.reload();
+    }
+  };
+  for (const b of document.querySelectorAll('[data-action="change-folder"], [data-action="fonts"], [data-action-group="folder"]')) b.hidden = false;
+}
 
 for (const b of document.querySelectorAll("[data-action]")) {
   b.addEventListener("click", () => {
@@ -1022,11 +1092,17 @@ $("#log-close").addEventListener("click", () => {
 // -- start --
 
 async function start() {
+  // (The web version first needs its folder.)
+  if (api.ready) await api.ready();
+  const unsaved = await recovery.unsaved();
   state.meta = await api.get("/api/meta");
   const startup = await api.get("/api/startup");
   await resetState(await api.post("/api/new", { name: "Untitled" }), null);
-  if (startup.designPath) await openPath(startup.designPath);
-  else if (startup.stlSource) await showStlSource(startup.stlSource);
+  if (!(await offerUnsaved(unsaved))) {
+    if (startup.designPath) await openPath(startup.designPath);
+    else if (startup.stlSource) await showStlSource(startup.stlSource);
+  }
+  recovery.begin(state);
   setInterval(pollFiles, WATCH_MS);
 }
 
