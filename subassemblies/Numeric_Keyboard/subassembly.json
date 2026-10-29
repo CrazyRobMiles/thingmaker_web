@@ -1,0 +1,23 @@
+{
+  "format": "thingmaker-subassembly",
+  "version": 1,
+  "name": "Numeric_Keyboard",
+  "display_name": "Numeric keyboard",
+  "description": "Keyboard with just numbers for testing",
+  "mock": "mock.stl",
+  "cutouts": [
+    {
+      "name": "Cutout",
+      "description": "Cutout",
+      "file": "cutout_Cutout.stl"
+    }
+  ],
+  "mountings": {
+    "top": {
+      "fixings": "top_fixings.stl"
+    },
+    "underneath": {
+      "fixings": "underneath_fixings.stl"
+    }
+  }
+}

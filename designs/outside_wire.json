@@ -1,0 +1,144 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "outside_wire",
+  "cases": [
+    {
+      "id": "base",
+      "style": "Rounded",
+      "width": 101.0,
+      "depth": 65.0,
+      "height": 30.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        -0.5,
+        7.5,
+        0.0
+      ],
+      "rotation": 0.0
+    },
+    {
+      "id": "lid",
+      "style": "Rounded",
+      "width": 101.0,
+      "depth": 65.0,
+      "height": 30.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        143.0,
+        9.85,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [
+    {
+      "id": "hinge1",
+      "cases": [
+        "base",
+        "lid"
+      ],
+      "edge": "back",
+      "open_angle": 110.0,
+      "margin": 10.0,
+      "outer_radius": 4.0,
+      "knuckles": 0,
+      "knuckle_gap": 0.5,
+      "clearance": 0.4,
+      "anchor": 4.0,
+      "pin_grip_diameter": 2.4,
+      "pin_turn_diameter": 2.9,
+      "pin_inner_diameter": 0.0,
+      "gap": 0.0,
+      "cable_gap": 0.0,
+      "cable_cover": true,
+      "open_limit": 110.0,
+      "bolt_head_diameter": 5.0,
+      "bolt_head_height": 3.0
+    }
+  ],
+  "devices": [
+    {
+      "id": "m5stackkb21",
+      "type": "M5StackKB2",
+      "case": "base",
+      "surface": "top",
+      "mount": "outside",
+      "x": 5.65,
+      "y": 4.85,
+      "rotation": 180,
+      "params": {
+        "recess_depth": -12.0,
+        "recess_style": "cut"
+      },
+      "connector_cuts": {
+        "connector1": true,
+        "connector2": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "small_powerpack1",
+      "type": "small_powerpack",
+      "case": "base",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 180,
+      "params": {
+        "connectorClearance": 3.0,
+        "margin_left": 2.5,
+        "margin_right": 2.5,
+        "margin_front": 1.0,
+        "margin_back": 1.0
+      },
+      "connector_cuts": {
+        "connection1": true,
+        "connection2": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pizero_small_lcd1",
+      "type": "PiZero_small_lcd",
+      "case": "lid",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 6.25,
+      "y": 2.75,
+      "rotation": 180,
+      "params": {
+        "connectorClearance": 3.5,
+        "margin_left": 0.0,
+        "margin_back": 2.0
+      },
+      "connector_cuts": {
+        "hdmi": false,
+        "usb": true,
+        "power": true,
+        "sd_card": true,
+        "camera": false,
+        "screen": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ],
+  "subassemblies": []
+}

@@ -1,0 +1,86 @@
+solid led
+  facet normal -1 0 0
+    outer loop
+      vertex 39.5 21.5 2.8
+      vertex 39.5 21.5 62.8
+      vertex 39.5 25.5 62.8
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 39.5 21.5 2.8
+      vertex 39.5 25.5 62.8
+      vertex 39.5 25.5 2.8
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 43.5 21.5 2.8
+      vertex 43.5 25.5 2.8
+      vertex 43.5 25.5 62.8
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 43.5 21.5 2.8
+      vertex 43.5 25.5 62.8
+      vertex 43.5 21.5 62.8
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 39.5 21.5 2.8
+      vertex 43.5 21.5 2.8
+      vertex 43.5 21.5 62.8
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 39.5 21.5 2.8
+      vertex 43.5 21.5 62.8
+      vertex 39.5 21.5 62.8
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 39.5 25.5 2.8
+      vertex 39.5 25.5 62.8
+      vertex 43.5 25.5 62.8
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 39.5 25.5 2.8
+      vertex 43.5 25.5 62.8
+      vertex 43.5 25.5 2.8
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 39.5 21.5 2.8
+      vertex 39.5 25.5 2.8
+      vertex 43.5 25.5 2.8
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 39.5 21.5 2.8
+      vertex 43.5 25.5 2.8
+      vertex 43.5 21.5 2.8
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 39.5 21.5 62.8
+      vertex 43.5 21.5 62.8
+      vertex 43.5 25.5 62.8
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 39.5 21.5 62.8
+      vertex 43.5 25.5 62.8
+      vertex 39.5 25.5 62.8
+    endloop
+  endfacet
+endsolid led

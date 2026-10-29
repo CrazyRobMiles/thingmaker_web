@@ -1,0 +1,229 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Cyberdeck",
+  "cases": [
+    {
+      "id": "main",
+      "style": "Rounded",
+      "width": 185.0,
+      "depth": 130.0,
+      "height": 44.0,
+      "lid_height": 7.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 1.5,
+      "edge": 3.0,
+      "min_width": 167.0,
+      "min_depth": 130.0,
+      "position": [
+        -9.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 0.0,
+      "decorations": {
+        "bottom": {
+          "image": {
+            "file": "D:\\GitHub\\thingmaker\\images\\overhead.png",
+            "zoom": 2.5,
+            "angle": 120.0,
+            "across": 20.0,
+            "up": -30.0
+          }
+        }
+      }
+    },
+    {
+      "id": "screen",
+      "style": "Rounded",
+      "width": 185.0,
+      "depth": 130.0,
+      "height": 17.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 0.0,
+      "decorations": {
+        "bottom": {
+          "image": {
+            "file": "D:\\GitHub\\thingmaker\\images\\camera_outline.png",
+            "zoom": 2.0,
+            "angle": 195.0,
+            "threshold": 133.0
+          }
+        }
+      }
+    }
+  ],
+  "hinges": [
+    {
+      "id": "hinge",
+      "cases": [
+        "main",
+        "screen"
+      ],
+      "edge": "back",
+      "open_angle": 110.0,
+      "margin": 10.0,
+      "outer_radius": 4.0,
+      "knuckles": 0,
+      "knuckle_gap": 0.10000000000000003,
+      "clearance": 0.4,
+      "anchor": 4.0,
+      "pin_grip_diameter": 2.4,
+      "pin_turn_diameter": 2.9,
+      "pin_inner_diameter": 0.0,
+      "gap": 0.1,
+      "cable_gap": 31.0,
+      "cable_cover": true,
+      "open_limit": 110.0,
+      "bolt_head_diameter": 5.5,
+      "bolt_head_height": 4.0
+    }
+  ],
+  "devices": [
+    {
+      "id": "pi",
+      "type": "PI4Landscape",
+      "case": "main",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 54.5,
+      "rotation": 90,
+      "params": {
+        "margin_right": 0.0,
+        "margin_back": 15.0,
+        "margin_left": 3.5,
+        "connectorReach": 130.0
+      },
+      "connector_cuts": {
+        "usb_ethernet": true
+      },
+      "connector_cut_targets": null,
+      "stick": [
+        "back",
+        "left"
+      ]
+    },
+    {
+      "id": "ups",
+      "type": "SmallUPS",
+      "case": "main",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 81.5,
+      "y": 0.0,
+      "rotation": 0,
+      "params": {
+        "margin_left": 9.0,
+        "margin_front": 5.5,
+        "margin_right": 5.5
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "front",
+        "right"
+      ]
+    },
+    {
+      "id": "lcd",
+      "type": "LCDPanel",
+      "case": "screen",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 9.0,
+      "y": 13.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {
+        "screen": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "Power In",
+      "type": "Hole",
+      "case": "main",
+      "surface": "back",
+      "mount": "outside",
+      "x": 161.0,
+      "y": 12.0,
+      "rotation": 270,
+      "params": {
+        "diameter": 14.0,
+        "recess_radius": 6.0,
+        "margin_top": 16.0,
+        "margin_right": 0.0,
+        "margin_left": 10.0,
+        "margin_bottom": 2.0
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "left",
+        "top"
+      ]
+    },
+    {
+      "id": "Power Switch",
+      "type": "Hole",
+      "case": "main",
+      "surface": "back",
+      "mount": "outside",
+      "x": 140.5,
+      "y": 13.5,
+      "rotation": 0,
+      "params": {
+        "margin_top": 16.0,
+        "margin_left": 30.0,
+        "diameter": 14.0
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "top",
+        "left"
+      ]
+    }
+  ],
+  "subassemblies": [
+    {
+      "id": "numkeyboard1",
+      "type": "NumKeyboard",
+      "case": "main",
+      "surface": "top",
+      "mount": "inside",
+      "x": 0.5,
+      "y": 20.0,
+      "rotation": 0,
+      "params": {
+        "mounting": "underneath",
+        "recess_depth": -3.5,
+        "margin_front": 1.0,
+        "margin_back": 1.0,
+        "margin_left": 1.0,
+        "margin_right": 1.0
+      },
+      "connector_cuts": {
+        "Cutout": true
+      },
+      "connector_cut_targets": [
+        "main.lid"
+      ],
+      "stick": []
+    }
+  ]
+}

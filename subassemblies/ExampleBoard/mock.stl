@@ -1,0 +1,338 @@
+solid ExampleBoard
+  facet normal -1 0 0
+    outer loop
+      vertex 0 0 0.0
+      vertex 0 0 1.6
+      vertex 0 32 1.6
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 0 0 0.0
+      vertex 0 32 1.6
+      vertex 0 32 0.0
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 50 0 0.0
+      vertex 50 32 0.0
+      vertex 50 32 1.6
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 50 0 0.0
+      vertex 50 32 1.6
+      vertex 50 0 1.6
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 0 0 0.0
+      vertex 50 0 0.0
+      vertex 50 0 1.6
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 0 0 0.0
+      vertex 50 0 1.6
+      vertex 0 0 1.6
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 0 32 0.0
+      vertex 0 32 1.6
+      vertex 50 32 1.6
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 0 32 0.0
+      vertex 50 32 1.6
+      vertex 50 32 0.0
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 0 0 0.0
+      vertex 0 32 0.0
+      vertex 50 32 0.0
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 0 0 0.0
+      vertex 50 32 0.0
+      vertex 50 0 0.0
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 0 0 1.6
+      vertex 50 0 1.6
+      vertex 50 32 1.6
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 0 0 1.6
+      vertex 50 32 1.6
+      vertex 0 32 1.6
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex -1.5 11.5 1.6
+      vertex -1.5 11.5 4.9
+      vertex -1.5 20.5 4.9
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex -1.5 11.5 1.6
+      vertex -1.5 20.5 4.9
+      vertex -1.5 20.5 1.6
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 6.0 11.5 1.6
+      vertex 6.0 20.5 1.6
+      vertex 6.0 20.5 4.9
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 6.0 11.5 1.6
+      vertex 6.0 20.5 4.9
+      vertex 6.0 11.5 4.9
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex -1.5 11.5 1.6
+      vertex 6.0 11.5 1.6
+      vertex 6.0 11.5 4.9
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex -1.5 11.5 1.6
+      vertex 6.0 11.5 4.9
+      vertex -1.5 11.5 4.9
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex -1.5 20.5 1.6
+      vertex -1.5 20.5 4.9
+      vertex 6.0 20.5 4.9
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex -1.5 20.5 1.6
+      vertex 6.0 20.5 4.9
+      vertex 6.0 20.5 1.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex -1.5 11.5 1.6
+      vertex -1.5 20.5 1.6
+      vertex 6.0 20.5 1.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex -1.5 11.5 1.6
+      vertex 6.0 20.5 1.6
+      vertex 6.0 11.5 1.6
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex -1.5 11.5 4.9
+      vertex 6.0 11.5 4.9
+      vertex 6.0 20.5 4.9
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex -1.5 11.5 4.9
+      vertex 6.0 20.5 4.9
+      vertex -1.5 20.5 4.9
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 20 8 1.6
+      vertex 20 8 3.1
+      vertex 20 20 3.1
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 20 8 1.6
+      vertex 20 20 3.1
+      vertex 20 20 1.6
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 32 8 1.6
+      vertex 32 20 1.6
+      vertex 32 20 3.1
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 32 8 1.6
+      vertex 32 20 3.1
+      vertex 32 8 3.1
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 20 8 1.6
+      vertex 32 8 1.6
+      vertex 32 8 3.1
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 20 8 1.6
+      vertex 32 8 3.1
+      vertex 20 8 3.1
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 20 20 1.6
+      vertex 20 20 3.1
+      vertex 32 20 3.1
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 20 20 1.6
+      vertex 32 20 3.1
+      vertex 32 20 1.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 20 8 1.6
+      vertex 20 20 1.6
+      vertex 32 20 1.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 20 8 1.6
+      vertex 32 20 1.6
+      vertex 32 8 1.6
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 20 8 3.1
+      vertex 32 8 3.1
+      vertex 32 20 3.1
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 20 8 3.1
+      vertex 32 20 3.1
+      vertex 20 20 3.1
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 40 22 1.6
+      vertex 40 22 2.8
+      vertex 40 25 2.8
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex 40 22 1.6
+      vertex 40 25 2.8
+      vertex 40 25 1.6
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 43 22 1.6
+      vertex 43 25 1.6
+      vertex 43 25 2.8
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 43 22 1.6
+      vertex 43 25 2.8
+      vertex 43 22 2.8
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 40 22 1.6
+      vertex 43 22 1.6
+      vertex 43 22 2.8
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex 40 22 1.6
+      vertex 43 22 2.8
+      vertex 40 22 2.8
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 40 25 1.6
+      vertex 40 25 2.8
+      vertex 43 25 2.8
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex 40 25 1.6
+      vertex 43 25 2.8
+      vertex 43 25 1.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 40 22 1.6
+      vertex 40 25 1.6
+      vertex 43 25 1.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex 40 22 1.6
+      vertex 43 25 1.6
+      vertex 43 22 1.6
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 40 22 2.8
+      vertex 43 22 2.8
+      vertex 43 25 2.8
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex 40 22 2.8
+      vertex 43 25 2.8
+      vertex 40 25 2.8
+    endloop
+  endfacet
+endsolid ExampleBoard

@@ -1,0 +1,30 @@
+{
+  "format": "thingmaker-subassembly",
+  "version": 1,
+  "name": "ExampleBoard",
+  "display_name": "Example board (from STLs)",
+  "description": "A made-up 50 x 32mm board defined by STL files, to show how subassemblies work.",
+  "mock": "mock.stl",
+  "cutouts": [
+    {
+      "name": "usb",
+      "description": "USB-C socket",
+      "file": "cutout_usb.stl"
+    },
+    {
+      "name": "led",
+      "description": "Light-pipe hole above the LED",
+      "file": "cutout_led.stl"
+    }
+  ],
+  "mountings": {
+    "top": {
+      "fixings": "top_fixings.stl",
+      "holes": "top_holes.stl"
+    },
+    "underneath": {
+      "fixings": "underneath_fixings.stl",
+      "holes": "underneath_holes.stl"
+    }
+  }
+}

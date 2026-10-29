@@ -1,0 +1,145 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Pi3Cyberdeck",
+  "cases": [
+    {
+      "id": "base",
+      "style": "MusicBox",
+      "width": 167.0,
+      "depth": 112.0,
+      "height": 30.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 1.5,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        -33.5,
+        -16.0,
+        0.0
+      ],
+      "rotation": 0.0
+    },
+    {
+      "id": "lid",
+      "style": "MusicBox",
+      "width": 167.0,
+      "depth": 112.0,
+      "height": 30.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        143.0,
+        -15.25,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [
+    {
+      "id": "hinge1",
+      "cases": [
+        "base",
+        "lid"
+      ],
+      "edge": "back",
+      "open_angle": 110.0,
+      "margin": 10.0,
+      "outer_radius": 4.0,
+      "knuckles": 0,
+      "knuckle_gap": 0.5,
+      "clearance": 0.4,
+      "anchor": 4.0,
+      "pin_grip_diameter": 2.4,
+      "pin_turn_diameter": 2.9,
+      "pin_inner_diameter": 0.0,
+      "gap": 0.0,
+      "cable_gap": 0.0,
+      "cable_cover": true,
+      "open_limit": 110.0
+    }
+  ],
+  "devices": [
+    {
+      "id": "pi3aplus1",
+      "type": "Pi3APlus",
+      "case": "base",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 45.5,
+      "y": 56.0,
+      "rotation": 0,
+      "params": {
+        "connectorReach": 6.0,
+        "recess_radius": 0.0,
+        "margin_front": 0.0,
+        "margin_back": 0.0
+      },
+      "connector_cuts": {
+        "power": false,
+        "hdmi": false,
+        "audio": false,
+        "usb": false
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "smallups1",
+      "type": "SmallUPS",
+      "case": "base",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 38.5,
+      "y": 0.0,
+      "rotation": 180,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "lcdpanel1",
+      "type": "LCDPanel",
+      "case": "lid",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 4.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {
+        "screen": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ],
+  "subassemblies": [
+    {
+      "id": "numkeyboard1",
+      "type": "NumKeyboard",
+      "case": "base",
+      "surface": "top",
+      "mount": "inside",
+      "x": 2.0,
+      "y": 19.5,
+      "rotation": 0,
+      "params": {
+        "mounting": "underneath"
+      },
+      "connector_cuts": {
+        "Cutout": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ]
+}

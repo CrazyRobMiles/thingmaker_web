@@ -147,3 +147,7 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# thingmaker: build output and pictures/STLs uploaded through the editor
+output/
+uploads/

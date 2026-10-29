@@ -1,0 +1,202 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Cyberdeck",
+  "cases": [
+    {
+      "id": "main",
+      "style": "MusicBox",
+      "width": 185.0,
+      "depth": 130.0,
+      "height": 37.0,
+      "lid_height": 7.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 1.5,
+      "min_width": 167.0,
+      "min_depth": 130.0,
+      "position": [
+        -9.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 0.0
+    },
+    {
+      "id": "screen",
+      "style": "MusicBox",
+      "width": 185.0,
+      "depth": 130.0,
+      "height": 17.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [
+    {
+      "id": "hinge",
+      "cases": [
+        "main",
+        "screen"
+      ],
+      "edge": "back",
+      "open_angle": 90.0,
+      "margin": 10.0,
+      "outer_radius": 4.0,
+      "knuckles": 0,
+      "knuckle_gap": 0.10000000000000003,
+      "clearance": 0.4,
+      "anchor": 4.0,
+      "pin_grip_diameter": 2.4,
+      "pin_turn_diameter": 2.9,
+      "pin_inner_diameter": 0.0,
+      "gap": 0.1,
+      "cable_gap": 31.0,
+      "cable_cover": true,
+      "open_limit": 110.0
+    }
+  ],
+  "devices": [
+    {
+      "id": "pi",
+      "type": "PI4Landscape",
+      "case": "main",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 75.0,
+      "y": 62.5,
+      "rotation": 90,
+      "params": {
+        "margin_right": 20.5,
+        "margin_back": 7.0
+      },
+      "connector_cuts": {
+        "usb_ethernet": true
+      },
+      "connector_cut_targets": null,
+      "stick": [
+        "right",
+        "back"
+      ]
+    },
+    {
+      "id": "ups",
+      "type": "SmallUPS",
+      "case": "main",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 0,
+      "params": {
+        "pillarHeight": 4.0,
+        "margin_left": 10.5,
+        "margin_front": 10.5
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "left",
+        "front"
+      ]
+    },
+    {
+      "id": "lcd",
+      "type": "LCDPanel",
+      "case": "screen",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 9.0,
+      "y": 13.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {
+        "screen": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "Power In",
+      "type": "Hole",
+      "case": "main",
+      "surface": "back",
+      "mount": "outside",
+      "x": 168.0,
+      "y": 0.0,
+      "rotation": 270,
+      "params": {
+        "diameter": 7.0,
+        "recess_radius": 3.5,
+        "margin_top": 0.0,
+        "margin_right": 0.0,
+        "margin_left": 10.0,
+        "margin_bottom": 2.0
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "bottom",
+        "left"
+      ]
+    },
+    {
+      "id": "Power Switch",
+      "type": "Hole",
+      "case": "main",
+      "surface": "back",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 13.5,
+      "rotation": 0,
+      "params": {
+        "margin_top": 16.0,
+        "margin_left": 10.0,
+        "diameter": 7.0
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "left",
+        "top"
+      ]
+    }
+  ],
+  "subassemblies": [
+    {
+      "id": "numkeyboard1",
+      "type": "NumKeyboard",
+      "case": "main",
+      "surface": "top",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 18.0,
+      "rotation": 0,
+      "params": {
+        "mounting": "underneath",
+        "recess_depth": -1.5,
+        "margin_front": 1.0,
+        "margin_back": 1.0,
+        "margin_left": 1.5,
+        "margin_right": 1.5
+      },
+      "connector_cuts": {
+        "Cutout": true
+      },
+      "connector_cut_targets": [
+        "main.lid"
+      ],
+      "stick": []
+    }
+  ]
+}

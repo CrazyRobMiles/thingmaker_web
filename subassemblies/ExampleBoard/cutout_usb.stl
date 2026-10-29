@@ -1,0 +1,86 @@
+solid usb
+  facet normal -1 0 0
+    outer loop
+      vertex -12.0 10.5 0.6
+      vertex -12.0 10.5 5.8999999999999995
+      vertex -12.0 21.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal -1 0 0
+    outer loop
+      vertex -12.0 10.5 0.6
+      vertex -12.0 21.5 5.8999999999999995
+      vertex -12.0 21.5 0.6
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 5.0 10.5 0.6
+      vertex 5.0 21.5 0.6
+      vertex 5.0 21.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal 1 0 0
+    outer loop
+      vertex 5.0 10.5 0.6
+      vertex 5.0 21.5 5.8999999999999995
+      vertex 5.0 10.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex -12.0 10.5 0.6
+      vertex 5.0 10.5 0.6
+      vertex 5.0 10.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal 0 -1 0
+    outer loop
+      vertex -12.0 10.5 0.6
+      vertex 5.0 10.5 5.8999999999999995
+      vertex -12.0 10.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex -12.0 21.5 0.6
+      vertex -12.0 21.5 5.8999999999999995
+      vertex 5.0 21.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal 0 1 0
+    outer loop
+      vertex -12.0 21.5 0.6
+      vertex 5.0 21.5 5.8999999999999995
+      vertex 5.0 21.5 0.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex -12.0 10.5 0.6
+      vertex -12.0 21.5 0.6
+      vertex 5.0 21.5 0.6
+    endloop
+  endfacet
+  facet normal 0 0 -1
+    outer loop
+      vertex -12.0 10.5 0.6
+      vertex 5.0 21.5 0.6
+      vertex 5.0 10.5 0.6
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex -12.0 10.5 5.8999999999999995
+      vertex 5.0 10.5 5.8999999999999995
+      vertex 5.0 21.5 5.8999999999999995
+    endloop
+  endfacet
+  facet normal 0 0 1
+    outer loop
+      vertex -12.0 10.5 5.8999999999999995
+      vertex 5.0 21.5 5.8999999999999995
+      vertex -12.0 21.5 5.8999999999999995
+    endloop
+  endfacet
+endsolid usb

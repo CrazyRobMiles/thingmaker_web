@@ -1,0 +1,102 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Surface test",
+  "cases": [
+    {
+      "id": "box",
+      "style": "Square",
+      "width": 140.0,
+      "depth": 110.0,
+      "height": 75.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "min_width": 140.0,
+      "min_depth": 110.0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 90.0
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "smallups1",
+      "type": "SmallUPS",
+      "case": "box",
+      "surface": "top",
+      "mount": "inside",
+      "x": 25.0,
+      "y": 33.5,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pi4landscape1",
+      "type": "PI4Landscape",
+      "case": "box",
+      "surface": "left",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 90,
+      "params": {
+        "margin_front": 10.5,
+        "margin_bottom": 5.5
+      },
+      "connector_cuts": {
+        "usb_ethernet": true
+      },
+      "connector_cut_targets": null,
+      "stick": [
+        "front",
+        "bottom"
+      ]
+    },
+    {
+      "id": "smallups2",
+      "type": "SmallUPS",
+      "case": "box",
+      "surface": "bottom",
+      "mount": "outside",
+      "x": 25.0,
+      "y": 33.5,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pi4landscape2",
+      "type": "PI4Landscape",
+      "case": "box",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 45.0,
+      "y": 0.0,
+      "rotation": 270,
+      "params": {
+        "margin_right": 5.5,
+        "margin_front": 5.5
+      },
+      "connector_cuts": {
+        "usb_ethernet": true
+      },
+      "connector_cut_targets": null,
+      "stick": [
+        "right",
+        "front"
+      ]
+    }
+  ],
+  "subassemblies": []
+}

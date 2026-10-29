@@ -1,0 +1,53 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "tinytablet",
+  "cases": [
+    {
+      "id": "base",
+      "style": "MusicBox",
+      "width": 67.0,
+      "depth": 50.0,
+      "height": 28.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        16.5,
+        15.0,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "pizero_smaller_lcd1",
+      "type": "PiZero_smaller_lcd",
+      "case": "base",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 0,
+      "params": {
+        "recess_style": "cut"
+      },
+      "connector_cuts": {
+        "hdmi": true,
+        "usb": true,
+        "power": true,
+        "sd_card": true,
+        "camera": true,
+        "screen": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ],
+  "subassemblies": []
+}
