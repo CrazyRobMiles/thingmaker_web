@@ -11,6 +11,7 @@ let api = null;
 let routes = null;
 let kernel = null;
 let where = null;
+let subassembliesChanged = false; // (told to the page once they're on disk)
 
 /** Read what a request will use, before it's answered. */
 async function prepare(route, body, query) {
@@ -52,6 +53,29 @@ async function prepare(route, body, query) {
     case "GET /api/stlbounds":
       await files.loadFile(files.resolve(String(q("path"))));
       break;
+    // (So a file of the same name there already is seen, and compared.)
+    case "POST /api/upload":
+      await files.loadDir(body.to === "images" ? where.images : where.uploads, { contents: true });
+      break;
+    case "POST /api/import/check":
+      await loadPictures(body.design);
+      break;
+    case "POST /api/import/design":
+      await loadPictures(body.design);
+      await files.loadDir(where.images, { contents: true });
+      await files.loadDir(where.designs);
+      break;
+    case "POST /api/import/subassembly": {
+      let name = body.fallback || "";
+      try {
+        name = JSON.parse(new TextDecoder().decode(new Uint8Array(body.files["subassembly.json"]))).name || name;
+      } catch (e) {
+        // (the import says what's wrong with it)
+      }
+      await files.loadDir(where.subassemblies);
+      if (name) await files.loadDir(files.join(where.subassemblies, String(name)), { recursive: true, contents: true });
+      break;
+    }
     case "POST /api/subassembly/save": {
       const sources = [body.mock, ...(body.cutouts || []).map((c) => c.file),
         ...Object.values(body.mountings || {}).flatMap((m) => Object.values(m))];
@@ -85,6 +109,10 @@ async function answer({ id, route, body = {}, query = {} }) {
     const params = new URLSearchParams(Object.entries(query).filter(([, v]) => v !== null && v !== undefined));
     const result = await kernel.scope(() => handler({ body, query: params }));
     await files.flush();
+    if (subassembliesChanged) {
+      subassembliesChanged = false;
+      postMessage({ type: "subassemblies-changed" });
+    }
     const transfer = result instanceof ArrayBuffer ? [result] : [];
     postMessage({ id, ok: true, result }, transfer);
   } catch (e) {
@@ -107,7 +135,9 @@ onmessage = async (event) => {
       routes = api.createApi(where, {
         places: [["The folder", "/"], ["Designs", where.designs], ["Output", where.output], ["Pictures", where.images],
           ["Subassemblies", where.subassemblies], ["Fonts", where.fonts], ["Uploads", where.uploads]],
-        onSubassemblySaved: () => postMessage({ type: "subassemblies-changed" }),
+        onSubassemblySaved: () => {
+          subassembliesChanged = true;
+        },
       });
       postMessage({ type: "ready" });
     } catch (e) {

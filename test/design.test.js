@@ -127,11 +127,23 @@ test("a hinge places its second case, folded open about the shared edge", () => 
 test("the problems list finds collisions, overhangs and short lids", () => {
   const design = new Design({ cases: [boxCase("a", { min_width: 200, min_depth: 100, lid_height: 2.0 })] });
   design.placements.push(new Placement("one", "Pi3APlus", "a", { stick: ["left"] }));
-  design.placements.push(new Placement("two", "Pi3APlus", "a", { stick: ["left"] }));
+  design.placements.push(new Placement("speaker", "SmallSpeaker", "a", { surface: "left", mount: "inside", stick: ["bottom"] }));
   design.relayout();
   const problems = kernel.scope(() => design.warnings());
-  assert.ok(problems.some((p) => p.includes("two collides with one")), problems.join("\n"));
+  assert.ok(problems.some((p) => p.includes("speaker collides with one")), problems.join("\n"));
   assert.ok(problems.some((p) => p.includes("too short for the retaining screws")), problems.join("\n"));
+});
+
+test("placements put on top of each other on a surface are moved apart", () => {
+  const design = new Design({ cases: [boxCase("a", { min_width: 200, min_depth: 100 })] });
+  design.placements.push(new Placement("one", "Pi3APlus", "a", { stick: ["left"] }));
+  design.placements.push(new Placement("two", "Pi3APlus", "a", { stick: ["left"] }));
+  design.relayout();
+  const [one, two] = design.placements;
+  // Both stuck to the left, so parted front to back.
+  assert.equal(one.x, two.x);
+  assert.ok(Math.abs(one.y - two.y) >= 57.0 - 1e-6, `${one.y} and ${two.y}`);
+  assert.ok(!design.warnings().some((p) => /collides/.test(p)));
 });
 
 test("a new placement is centred where it's added, and named after its type", () => {
@@ -142,4 +154,47 @@ test("a new placement is centred where it's added, and named after its type", ()
   assert.equal(spec.y, 10 - 3);
   const keyboard = dm.newPlacement(design, "NumKeyboard", "a", "top", "inside");
   assert.equal(keyboard.params.mounting, "underneath");
+});
+
+test("a case can fit its height to what's on its walls, floor and lid", () => {
+  const sized = (fit, ...placements) => {
+    const design = new Design({ cases: [boxCase("case", { height: 20.0, fit_height: fit })] });
+    design.placements.push(...placements);
+    design.relayout();
+    return design;
+  };
+  // A 42mm speaker on a wall: its height and its margins - under the retaining screws' nut blocks, as it's as wide as
+  // the wall is long.
+  const wall = sized(true, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" }));
+  assert.equal(wall.cases[0].height, 53.1);
+  assert.deepEqual(wall.warnings(), []);
+  assert.ok(!wall.warnings().some((w) => /overhangs|sticks out/.test(w)));
+  assert.equal(sized(false, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" })).cases[0].height, 20.0);
+  // A Pico (7.8mm, to the top of its USB socket) on the floor under a pixel ring hanging 8.4mm from the lid, 1mm apart.
+  const stack = sized(true, new Placement("pico", "Pico", "case"),
+    new Placement("ring", "PixelRingLightPipes", "case", { surface: "top", mount: "inside" }));
+  assert.equal(stack.cases[0].height, 17.2);
+  // A Pi 4's USB stack leaves through the wall, but is as tall inside.
+  assert.equal(sized(true, new Placement("pi", "PI4Landscape", "case")).cases[0].height, 27.0);
+  // A screen hanging from the lid faces down into the case, so it counts (on the floor, it'd go up through the lid).
+  const lid = sized(true, new Placement("screen", "LCDPanel", "case", { surface: "top", mount: "inside" }),
+    new Placement("pico", "Pico", "case", { stick: ["left", "front"], params: { margin_left: 3, margin_front: 3 } }));
+  assert.equal(lid.cases[0].height, 33.1);
+  assert.deepEqual([lid.placements[1].x, lid.placements[1].y], [0.0, 0.0]);
+  assert.ok(!lid.warnings().some((w) => /collides/.test(w)));
+  // A speaker on a wall sits above a battery compartment filling the floor (26mm), rather than the case growing
+  // round it centred.
+  const box = new Design({ cases: [boxCase("case", { height: 20.0, fit_height: true })] });
+  box.placements.push(new Placement("speaker", "SmallSpeaker", "case", { surface: "right", mount: "inside" }),
+    new Placement("battery", "BatteryCompartment", "case", { surface: "bottom", mount: "outside", params: { back: "plate" } }));
+  box.relayout();
+  assert.equal(box.cases[0].height, 63.5);
+  assert.deepEqual(box.warnings().filter((w) => !/nut blocks/.test(w)), []);
+  // Nothing in it: the height it had.
+  assert.equal(sized(true).cases[0].height, 20.0);
+  // Written only when it's on, so other designs are as the Python thingmaker writes them.
+  assert.equal(stack.to_dict().cases[0].fit_height, true);
+  assert.ok(!("fit_height" in sized(false).to_dict().cases[0]));
+  assert.equal(Design.from_dict(JSON.parse(stack.dumps())).cases[0].fit_height, true);
+  assert.throws(() => boxCase("case", { fit_height: "yes" }), /fit_height must be true or false/);
 });

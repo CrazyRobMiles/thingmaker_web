@@ -41,7 +41,7 @@ async function setUp(handle, report) {
 }
 
 /** Ask for a folder (or confirm the one used last time). Resolves to
-{handle, name, folderPath}. */
+{handle, name}. */
 export async function connect({ change = false } = {}) {
   if (!window.isSecureContext) {
     await modal("thingmaker needs a secure address", () => ({
@@ -66,8 +66,6 @@ export async function connect({ change = false } = {}) {
   }
   if (saved && !change && (await permitted(saved.handle, false))) return saved;
   for (;;) {
-    const pathInput = el("input", { type: "text", value: saved ? saved.folderPath || "" : "",
-      placeholder: "e.g. D:\\GitHub\\thingmaker (optional)" });
     const note = el("div", { class: "note" });
     const chosen = await modal("Your thingmaker folder", (close) => {
       const chooseNew = async () => {
@@ -88,12 +86,12 @@ export async function connect({ change = false } = {}) {
             note.textContent = `Couldn't copy the examples: ${e.message}`;
           }
         }
-        return { handle, name: handle.name, folderPath: pathInput.value.trim() };
+        return { handle, name: handle.name };
       };
       const buttons = [];
       if (saved && !change) {
-        buttons.push([`Open "${saved.name}" again`, async () => ((await permitted(saved.handle, true))
-          ? { ...saved, folderPath: pathInput.value.trim() } : undefined), "primary"]);
+        buttons.push([`Open "${saved.name}" again`, async () => ((await permitted(saved.handle, true)) ? saved : undefined),
+          "primary"]);
       }
       buttons.push(["Choose a folder...", chooseNew, saved && !change ? null : "primary"]);
       if (change) buttons.unshift(["Cancel", null]);
@@ -103,8 +101,6 @@ export async function connect({ change = false } = {}) {
             "builds in a folder on this computer, laid out as the Python thingmaker's is: designs/, subassemblies/, images/, " +
             "fonts/ and output/. Choose that folder - your thingmaker repository, say - or an empty one, which is set up with " +
             "the examples. The browser asks to let this site see and change the files in it; nothing else on the computer."),
-          el("label", { title: "Pictures you add are written into designs with this path, so the Python thingmaker finds them" },
-            "Where it is on this computer"), pathInput,
           el("div", { class: "wide note" }, "Fonts: text is engraved with the fonts in its fonts/ folder, or free stand-ins " +
             "for Arial, Times New Roman and Courier New. File > Fonts... copies in this computer's own."),
           el("div", { class: "wide" }, note)),
@@ -114,7 +110,7 @@ export async function connect({ change = false } = {}) {
     if (chosen === null && change && saved) return saved;
     if (chosen) {
       try {
-        await idb.put("settings", { handle: chosen.handle, name: chosen.name, folderPath: chosen.folderPath }, KEY);
+        await idb.put("settings", { handle: chosen.handle, name: chosen.name }, KEY);
       } catch (e) {
         await message("Can't remember the folder", `It'll be asked for again next time (${e.message}).`);
       }

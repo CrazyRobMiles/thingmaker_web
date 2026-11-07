@@ -1,5 +1,6 @@
 // The properties panel: the settings of whatever is selected, each change
 // sent to the server as an edit (ctx.change).
+import { typeSelect } from "./groups.js";
 import { fmtG, pyRound } from "/lib/py.js";
 
 export const SNAP = 0.5; // mm - drag positions snap to this, and X/Y step by it
@@ -172,6 +173,15 @@ function caseProps(form, ctx, c) {
   for (const [name, , label] of meta.caseFields.slice(1)) {
     if (name === "width" || name === "depth") continue;
     if (name === "edge" && !meta.edgeStyles.includes(c.style)) continue; // only Rounded and Bevelled cases have shaped edges
+    if (name === "height") {
+      const tip = "Worked out from what's in it: room for what's on its walls, and for what stands on its floor and hangs " +
+        "from its lid, with a little to spare";
+      form.add(form.check("Fit height to what's in it", c.fit_height, (v) => set("fit_height", v), { tip }));
+      if (c.fit_height) {
+        form.row("Inside height", `${fmtG(c.height)} mm`, tip);
+        continue;
+      }
+    }
     const minimum = meta.minimums.includes(name);
     form.row(name === "edge" ? "Edge" : label.split(" (mm)")[0], form.spin(c[name], (v) => set(name, v),
       { lo: minimum ? 0 : 0.5, hi: 2000 }), label);
@@ -329,15 +339,29 @@ function surfaceProps(form, ctx, caseId, name, mount) {
   const s = c.surfaces.find((x) => x.name === name && x.mount === mount);
   form.heading(`${caseId}: ${name} surface, ${mount}`);
   form.note(`${fmtG(s.width)} x ${fmtG(s.height)} mm, ${fmtG(s.thickness)} mm thick, on part ${s.part}.`);
+  // What's on it, either side - devices go inside whichever side was clicked.
+  const here = view.placements.filter((p) => p.case === caseId && p.surface === name)
+    .sort((p, q) => (p.mount === mount ? 0 : 1) - (q.mount === mount ? 0 : 1) || p.id.localeCompare(q.id));
+  form.heading("On this surface");
+  if (!here.length) form.note("Nothing yet.");
+  else {
+    form.add(el("div", { class: "placed" }, here.map((p) => {
+      const type = meta.types[p.type];
+      return el("button", { type: "button", class: "placed-item", title: `Select ${p.id}`, onclick: () => ctx.select(["placement", p.id]) },
+        el("span", { class: "placed-id" }, p.id),
+        el("span", { class: "placed-type" }, `${type ? type.displayName : p.type}, ${p.mount}`));
+    })));
+  }
+  form.heading("Add");
   for (const kind of ["device", "subassembly"]) {
     const names = kind === "device" ? meta.devices : meta.subassemblies;
     if (!names.length) continue;
-    const combo = form.combo(names.map((n) => [n, meta.types[n].displayName]), names[0], () => {});
-    form.row(kind[0].toUpperCase() + kind.slice(1), combo);
-    form.buttons(button(`Add ${kind} here`, () => ctx.addPlacement(combo.value, caseId, name, mount)));
+    const choice = typeSelect(meta, names);
+    form.row(kind[0].toUpperCase() + kind.slice(1), choice);
+    // (A device goes on its own side of the surface - inside, mostly; a subassembly on this one.)
+    form.buttons(button(`Add ${kind} here`, () => ctx.addPlacement(choice.value, caseId, name,
+      (kind === "device" && meta.types[choice.value].defaultMount) || mount, null, null, mount)));
   }
-  const here = view.placements.filter((p) => p.case === caseId && p.surface === name && p.mount === mount);
-  form.note(`Here: ${here.map((p) => `${p.id} (${p.kind})`).join(", ") || "nothing yet"}`);
   form.note("Tip: right-clicking the surface adds a device or subassembly where you clicked.");
   decorationProps(form, ctx, caseId, name, mount);
 }

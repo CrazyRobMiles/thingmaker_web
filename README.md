@@ -48,8 +48,9 @@ Where things are kept:
   dialogs browse the server's disk, so a design can be anywhere.
 - **Subassemblies**: `subassemblies/`, or set `THINGMAKER_SUBASSEMBLIES` -
   point it at the Python thingmaker's `subassemblies/` to share them.
-- **Pictures** for decorations: anywhere on disk; the Browse dialog can also
-  upload one from the computer the browser is on into `images/`.
+- **Pictures** for decorations: anywhere on disk, though `images/` is the
+  place for them; the Browse dialog can also upload one from the computer
+  the browser is on into `images/`. See "Picture paths" below.
 - **Fonts** for engraved text: the ones installed on the computer, and any
   in `fonts/`. That has the free Liberation Sans, Serif and Mono (SIL Open
   Font License, `fonts/LICENSE-Liberation.txt`), which stand in for Arial,
@@ -67,11 +68,22 @@ and Edit subassembly), Undo and Redo, Add case / hinge / device /
 subassembly, Delete, **Build (F5)**, the **Design** and **Print parts**
 views, and the view options **Layout**, **Lids** and **Built model**.
 
-- **Click a surface** to select it. The face you click decides inside or
-  outside. Turn off **Lids** to reach the inside of a case.
+- **Click a surface** to select it. Turn off **Lids** to reach the inside of
+  a case.
 - **Right-click a surface** to add a device or a subassembly where you
   clicked; right-click a device to rotate it, stick it to sides, save its
-  template or delete it.
+  template or delete it. A device goes on its own side of the surface,
+  whichever face you clicked: inside the case, apart from the battery
+  compartment, which goes outside. (A device in `lib/library/` can say
+  otherwise with `mount`.) A subassembly goes on the face you clicked.
+  **Add device...** starts with the device's side too, and its **Inside or
+  outside** can still change it.
+- **Devices are listed by what they are** - processors, displays, sound,
+  lights, buttons and keys, power, other - in the Add menus and lists. A
+  device's `CATEGORY` (or a definition's `category` in `lib/library/`, or a
+  subassembly's `"category"` in its `subassembly.json`) says which.
+- **A surface's panel** lists what's on that surface, inside and out -
+  click one to select it - and adds devices and subassemblies to it.
 - **Drag a device** to slide it across its surface. Drag elsewhere to turn
   the view; Shift-drag or right-drag pans, the wheel zooms. Arrow keys nudge
   the selected device 1mm (10mm with Shift), **R** rotates it, **Delete**
@@ -114,7 +126,7 @@ a Raspberry Pi), which let a page work in a folder on the computer.
 
 The site is built from this repository into `site/`, which isn't kept in
 git - build it wherever you clone the repository. Building needs Node.js 18
-or later (20 is what it's tested with); running it needs only a static web
+or later (the GitHub Pages build uses 22); running it needs only a static web
 server and the browser.
 
 ```
@@ -211,13 +223,30 @@ Python thingmaker and the Node version can work on the same ones.
   as Windows names their files (`arial.ttf`, `arialbd.ttf`), as design
   files name them. Fonts that are added are used once thingmaker starts
   again (it offers to).
-- **Pictures**: a design names its pictures by path - often a Windows path,
-  `D:\GitHub\thingmaker\images\overhead.png`. The web version looks for
-  them in the folder: at that path's end (`images/overhead.png`), or failing
-  that in `images/`. Pictures you add are copied into `images/` and written
-  into the design relative to the folder (`images/x.png`), or, if you've
-  given the folder's path on this computer when choosing it, as a full path
-  the Python thingmaker finds too.
+- **Pictures** are found and named as in the other versions (see "Picture
+  paths" below), in the folder.
+- **Bringing things in from elsewhere:** the site can only see its folder,
+  so anything from elsewhere on the computer is copied into it, and named
+  where it's been copied to, so it's found from then on (and on any
+  computer, in any version):
+  - **File > Import design...** picks a design file from anywhere. It lists
+    the pictures and subassemblies the design uses that aren't in the
+    folder: choose each picture, and each subassembly's folder, from
+    wherever they are. The design goes in `designs/` (not over one of the
+    same name: it's `name_2.json`), its pictures in `images/`, its
+    subassemblies in `subassemblies/<name>/`, and the design names the
+    copies (`images/x.png`). Then it opens.
+  - **File > Import subassembly...** copies in a subassembly's folder - or
+    every subassembly in a folder of them, someone's `subassemblies/` say.
+    One that's there already, the same, is left be; a different one of the
+    same name is replaced only if you say so.
+  - A picture's **Browse...** and the STL fields of **New subassembly**
+    take files from anywhere, with **Upload from this computer...**:
+    pictures go in `images/`, STLs into the subassembly's folder when it's
+    saved. The same picture brought in twice is kept once.
+
+  Picking a folder to bring in from asks the browser only to *read* it,
+  once; the site can't change it, or see it again.
 - **Recovery** is as in the Node version (autosave and earlier versions),
   in this browser.
 - **Security:** the site can read and change everything in the folder you
@@ -262,16 +291,35 @@ The design is laid out again after every change.
   default). They stay with those sides when the device is turned.
 - **Case sizes:** every case gets the same width and depth: the largest any
   case needs for its devices' footprints, or the largest
-  `min_width`/`min_depth`. Heights aren't changed; a device too tall for its
-  case is reported. A case with its own position keeps its centre where it
-  was as it grows or shrinks; a hinged case follows its hinge.
+  `min_width`/`min_depth`. A case with its own position keeps its centre
+  where it was as it grows or shrinks; a hinged case follows its hinge.
+- **Case heights** stay as they're set, and a device too tall for its case
+  is reported - unless the case is set to **Fit height to what's in it**
+  (`"fit_height": true`). Then its height is worked out too, each case its
+  own:
+  - Devices on its walls get their footprints up the wall, laid out as
+    width and depth are, with their `margin_bottom`/`margin_top` - but
+    each centred in the height it has, unless it's over or under another,
+    and kept 1mm clear of what's on the floor or lid below or above it
+    and 0.5mm clear of the retaining screws' nut blocks at the top.
+  - What stands on its floor or hangs from its lid gets 1mm clear of the
+    lid or floor - a connector going out through a wall (a Pi's USB stack)
+    counts, one going up through the lid (a screen) doesn't.
+  - Something on the floor clears what's over it on the lid by 1mm too.
+
+  Things on walls that meet side by side in a corner aren't moved apart
+  (as they aren't across the width and depth either): the problems list
+  says so. `fit_height` is only written to a design when it's on.
 - **Sticky devices** go against the side(s) they stick to; their margin on
   that side is how far the device itself is from it. Moving a stuck device
   towards or away from that side changes the margin instead.
 - **Unstuck devices** on a surface stay together, centred in the space left
   between the devices stuck to either side beside them.
 - **No overlaps:** devices on the same surface that are apart are kept from
-  overlapping as a case shrinks.
+  overlapping as a case shrinks. One put on top of another - added there,
+  or dragged onto it - is moved off it, along whichever way across the
+  surface makes the case grow least (and not along a side it's stuck to,
+  if the other can move instead).
 
 Each device adds **fusers** (pillars, say) to the surface it's on, cuts
 **cutters** (bolt holes) from it, and has **connector cuts**: each row of its
@@ -331,8 +379,19 @@ and optionally inlaid in other colours (`inlay`): select a surface and tick
 
 ```json
 "decorations": {"top": {"text": {"text": "thingmaker", "font": "arialbd", "size": 12},
-                        "image": {"file": "C:/pictures/camera.jpg", "style": "mosaic"}}}
+                        "image": {"file": "images/camera.jpg", "style": "mosaic"}}}
 ```
+
+**Picture paths:** a picture's `file` is best given relative to the
+thingmaker folder - the one with `designs/` and `images/` in it - as
+`images/camera.jpg`, and that's how thingmaker writes the path of a picture
+you choose from that folder. Then the design works on any computer, in all
+three versions (the Python thingmaker is run from that folder, so finds
+them there). A full path (`C:/pictures/camera.jpg`) works too, on the
+computer it's on. If a picture isn't where the design says, the Node and
+web versions look in the thingmaker folder: at the end of the path
+(`D:\GitHub\thingmaker\images\overhead.png` is `images/overhead.png`
+there), or in `images/`. The example designs' pictures are in `images/`.
 
 Text uses any installed TrueType or OpenType font, by its file's name. A
 picture (PNG, JPEG, GIF or BMP) is drawn as an `outline` (its dark parts), a
@@ -358,9 +417,59 @@ uploaded from the browser's computer); it's saved as
 `subassemblies/<Name>/` with a `subassembly.json`, the same as the Python
 thingmaker's.
 
+### Devices from boxmaker
+
+Devices can also be described as data - a board, the pillars it stands on,
+what it cuts through the surface it's on, and the openings its connectors
+need in the case - in `lib/library/`, one file each, listed in
+`lib/library.js` (which says what a definition holds). They're ported from
+boxmaker, an older FreeCAD macro whose devices place themselves on a case's
+base with `placeComponent()`:
+
+1. **Record** what boxmaker's devices do. FreeCAD isn't needed: the script
+   stands in for it, records every shape each device adds to or cuts from
+   the case, and writes them all to one file:
+
+   ```
+   python tools/boxmaker/extract.py PATH/TO/boxmaker.py boxmaker-devices.json
+   ```
+
+2. **Draft** a device from its record:
+
+   ```
+   node tools/boxmaker/draft.mjs boxmaker-devices.json PICO --type Pico
+   ```
+
+   This writes `lib/library/pico.js` with the board, its pillars and the
+   openings it cuts through the surface it's on, and keeps the record in
+   `tools/boxmaker/records/`. Its notes list the classes that go with it in
+   boxmaker:
+   - lid placeholders (they only keep a space in the lid's grid) are left
+     out;
+   - landscape copies are left out, as a placement can be turned;
+   - cutout devices - a hole in the lid above a sensor, say - become the
+     device's own connectors (`up`), or openings if it's mounted on the lid
+     itself.
+
+   The notes also list anything the draft didn't understand.
+3. **Finish it by hand.** Give it its name and description, board thickness
+   and what stands on it (for the preview and the collision checks). Add its
+   **connectors**: boxmaker cut these into the walls by hand in its box
+   functions (`PICOBox` cuts the Pico's USB hole), which the notes name.
+   Then add it to `DEFINITIONS` in `lib/library.js`.
+4. **Check it:** `npm test` builds every definition into a case and checks
+   that its pillars and openings are still boxmaker's.
+
+So far: the Raspberry Pi Pico (`Pico`), a pixel ring with light pipes
+(`PixelRingLightPipes`) and a small speaker (`SmallSpeaker`).
+
 ## Compatibility
 
-Both programs read and write the same files:
+This version is taking over from the Python thingmaker, which isn't being
+developed any more. It opens every Python design and builds the same parts,
+but has things the Python version doesn't (devices on walls, devices from
+boxmaker, fitting a case's height, ...): a design that uses them only opens
+here. For designs from the Python version:
 
 - A design loaded and saved by either is written byte-for-byte as the other
   would write it - Python's `json.dump(indent=2)` layout, its float
@@ -394,6 +503,8 @@ Both programs read and write the same files:
 | `lib/design.js` | The JSON model, frames, layout and problems |
 | `lib/edits.js`, `lib/view.js` | The editor's edits, and what the page draws |
 | `lib/devices.js`, `lib/subassemblies.js`, `lib/catalogue.js` | Devices and subassemblies |
+| `lib/library.js`, `lib/library/` | Devices described as data (ported from boxmaker) |
+| `tools/boxmaker/` | Recording boxmaker's devices and drafting definitions from them |
 | `lib/cases.js`, `lib/hinges.js` | Case and hinge solids |
 | `lib/builder.js`, `lib/worker.js` | Building and checking parts (and the live build's worker thread) |
 | `lib/decoration.js`, `lib/engraving.js`, `lib/imaging.js` | Decorations, text and picture outlines |

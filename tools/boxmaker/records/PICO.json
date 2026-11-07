@@ -1,0 +1,198 @@
+{
+ "class": "PICO",
+ "partType": "PICO",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  21,
+  52
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 2,
+  "pillarHeight": 4,
+  "holeRadius": 0.9,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 52,
+  "boardWidth": 21,
+  "holeYSpacing": 47,
+  "holeXSpacing": 11.4
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     4.8,
+     2.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.9,
+    "h": 4,
+    "at": [
+     4.8,
+     2.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     4.8,
+     49.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.9,
+    "h": 4,
+    "at": [
+     4.8,
+     49.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     16.2,
+     49.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.9,
+    "h": 4,
+    "at": [
+     16.2,
+     49.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     16.2,
+     2.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.9,
+    "h": 4,
+    "at": [
+     16.2,
+     2.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

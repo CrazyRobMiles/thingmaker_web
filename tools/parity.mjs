@@ -3,7 +3,9 @@
 folder, both load it, lay it out and save it again (the files must be
 identical), list its problems (the same), and build it (the same parts,
 each the same number of solids and the same volume to within 0.01%, and the
-same hinge check). Both use the Python thingmaker's subassemblies/.
+same hinge check). Both use the Python thingmaker's subassemblies/. The
+Python thingmaker isn't developed any more: a design only this version can
+open (one using something newer) is listed, not counted as a difference.
 
     node tools/parity.mjs PYTHON_THINGMAKER_FOLDER [DESIGNS_FOLDER] [--no-build]
 
@@ -50,6 +52,7 @@ json.dump(out, open(os.path.join(sys.argv[3], "python.json"), "w"))
 `;
 
 process.stdout.write(`Python thingmaker: ${pythonRepo}\nDesigns: ${designsDir}\n`);
+fs.mkdirSync(path.join(work, "py"), { recursive: true });
 const py = spawnSync("python", ["-c", PYTHON, pythonRepo, designsDir, path.join(work, "py"), noBuild ? "-" : "build"],
   { stdio: ["ignore", "inherit", "inherit"], env: { ...process.env, PYTHONIOENCODING: "utf-8" } });
 fs.mkdirSync(path.join(work, "py"), { recursive: true });
@@ -60,6 +63,7 @@ if (py.status !== 0 || !fs.existsSync(path.join(work, "py", "python.json"))) {
 const python = JSON.parse(fs.readFileSync(path.join(work, "py", "python.json"), "utf8"));
 
 let differences = 0;
+let newer = 0;
 const report = (name, text) => {
   differences += 1;
   process.stdout.write(`  ${name}: ${text}\n`);
@@ -75,6 +79,11 @@ for (const [name, p] of Object.entries(python)) {
     mine = { error: `${e.constructor.name}: ${e.message}` };
   }
   const before = differences;
+  if (p.error && !mine.error) {
+    newer += 1;
+    process.stdout.write(`newer  ${name} (Python: ${p.error})\n`);
+    continue;
+  }
   if (p.error || mine.error) {
     if (!(p.error && mine.error)) report(name, `Python: ${p.error || "loads"}; here: ${mine.error || "loads"}`);
   } else {
@@ -99,5 +108,6 @@ for (const [name, p] of Object.entries(python)) {
   process.stdout.write(`${differences === before ? "same" : "DIFFERENT"}  ${name}\n`);
 }
 fs.rmSync(work, { recursive: true, force: true });
-process.stdout.write(`${Object.keys(python).length} designs, ${differences} difference(s)\n`);
+process.stdout.write(`${Object.keys(python).length} designs, ${differences} difference(s)` +
+  `${newer ? `, ${newer} only this version can open` : ""}\n`);
 process.exit(differences ? 1 : 0);

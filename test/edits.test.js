@@ -4,7 +4,7 @@ import { test } from "node:test";
 import { Design } from "../lib/design.js";
 import { applyEdit } from "../lib/edits.js";
 import * as kernel from "../lib/kernel.js";
-import { view } from "../lib/view.js";
+import { meta, view } from "../lib/view.js";
 
 const CASE = { style: "MusicBox", height: 30, lid_height: 6, wall_thickness: 3, base_thickness: 3, lid_thickness: 3, edge: 3,
   min_width: 0, min_depth: 0 };
@@ -67,4 +67,27 @@ test("the view has what the browser draws", () => {
   assert.equal(v.cases[0].matrix.length, 16);
   assert.equal(v.placements[0].id, "hole1");
   assert.deepEqual(v.partIds, ["a.base", "a.lid"]);
+});
+
+test("a device added from a click on the outside goes inside, where it was clicked", () => {
+  const roomy = { ...CASE, min_width: 150, min_depth: 120 };
+  let d = run(new Design({ name: "Mounts" }).to_dict(), { op: "add_case", id: "a", values: roomy });
+  // Clicked near the left and near the right, seen from outside the lid: inside, the first is on the right.
+  d = run(d,
+    { op: "add_placement", type: "SmallSpeaker", case: "a", surface: "top", mount: "inside", centre: [30, 60], centre_mount: "outside" },
+    { op: "add_placement", type: "SmallSpeaker", case: "a", surface: "top", mount: "inside", centre: [120, 60], centre_mount: "outside" });
+  const [first, second] = Design.from_dict(d).placements;
+  assert.equal(first.mount, "inside");
+  assert.ok(first.x > second.x + 40, `${first.x} isn't right of ${second.x}`);
+  // From inside, as clicked.
+  d = run(d, { op: "remove", id: first.id }, { op: "remove", id: second.id },
+    { op: "add_placement", type: "SmallSpeaker", case: "a", surface: "top", mount: "inside", centre: [30, 60], centre_mount: "inside" },
+    { op: "add_placement", type: "SmallSpeaker", case: "a", surface: "top", mount: "inside", centre: [120, 60], centre_mount: "inside" });
+  const [left, right] = Design.from_dict(d).placements;
+  assert.ok(left.x + 40 < right.x);
+  // Which side each type goes on.
+  const { types } = meta();
+  assert.equal(types.SmallSpeaker.defaultMount, "inside");
+  assert.equal(types.BatteryCompartment.defaultMount, "outside");
+  assert.equal(types.ExampleBoard.defaultMount, null);
 });

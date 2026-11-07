@@ -20,6 +20,17 @@ export async function post(path, body = {}) {
   return check(await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }));
 }
 
+/** A picture chosen for a decoration, as the design should name it
+(relative to the thingmaker folder, if it's in it). */
+export async function storedPicturePath(path) {
+  return (await get("/api/picture", { path })).stored;
+}
+
+/** Where a picture a design names is (to start looking from). */
+export async function pictureFolder(path) {
+  return (await get("/api/picture", { path })).located;
+}
+
 /** Upload a file from this computer to the server; resolves to its path
 there. */
 export async function upload(file, to = "uploads") {

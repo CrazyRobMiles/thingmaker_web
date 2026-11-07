@@ -4,6 +4,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as api from "./api.js";
+import { typeSelect } from "./groups.js";
 import { COLORS, parseStl } from "./scene.js";
 
 export function el(tag, attrs = {}, ...children) {
@@ -259,13 +260,19 @@ export function addHingeDialog(meta, design, hingeId) {
 /** Place a device, or (kind "subassembly") a subassembly. */
 export function addPlacementDialog(meta, design, { caseId = null, surface = null, mount = "inside", kind = "device" }) {
   const names = kind === "device" ? meta.devices : meta.subassemblies;
-  const type = el("select", {}, names.map((n) => el("option", { value: n }, `${meta.types[n].displayName}  (${n})`)));
+  const type = typeSelect(meta, names);
   const kase = el("select", {}, design.cases.map((c) => el("option", { value: c.id }, c.id)));
   if (caseId) kase.value = caseId;
   const surf = el("select", {}, meta.surfaces.map((s) => el("option", { value: s }, s)));
   if (surface) surf.value = surface;
   const mountSel = el("select", {}, meta.mounts.map((m) => el("option", { value: m }, m)));
   mountSel.value = mount;
+  // Each type starts on its own side (inside, mostly); it can still be changed.
+  const typeMount = () => {
+    if (meta.types[type.value] && meta.types[type.value].defaultMount) mountSel.value = meta.types[type.value].defaultMount;
+  };
+  type.addEventListener("change", typeMount);
+  typeMount();
   const stick = el("div", { class: "checks" });
   const fillStick = () => {
     stick.replaceChildren();

@@ -2,9 +2,10 @@
 // by Web Workers in this page (static/engine-worker.js for the design,
 // static/build-worker.js for the live model and for Build) instead of a
 // server. The static build puts this in place of public/js/api.js.
-import { candidates } from "../lib/files-browser.js";
+import { candidates, storedPath } from "../lib/files-browser.js";
 import { connect } from "./folder.js";
 import * as fonts from "./fonts.js";
+import * as importer from "./importer.js";
 
 const ENGINE = new URL("./engine-worker.js", import.meta.url);
 const BUILDER = new URL("./build-worker.js", import.meta.url);
@@ -186,14 +187,10 @@ export function buildEvents(id, handlers) {
 // -- the folder --
 
 /** A picture chosen in the folder (/images/x.png), as it's written into the
-design: under the folder's path on this computer if that's been given, so
-the Python thingmaker finds it, or else relative to the folder. */
+design: relative to the folder (images/x.png), as the Node version writes
+them too. */
 export function storedPicturePath(path) {
-  const rel = path.replace(/^\/+/, "");
-  const base = folder && folder.folderPath;
-  if (!base) return rel;
-  const sep = base.includes("\\") ? "\\" : "/";
-  return base.replace(/[\\/]+$/, "") + sep + rel.split("/").join(sep);
+  return storedPath(path);
 }
 
 /** Where in the folder to start looking for a picture a design names. */
@@ -206,6 +203,19 @@ export function pictureFolder(path) {
 export async function manageFonts() {
   await ready();
   return fonts.manageFonts(folder.handle);
+}
+
+/** File > Import design...: resolves to {path, meta} for the design
+brought into the folder (meta if subassemblies came in with it), or null. */
+export async function importDesign() {
+  await ready();
+  return importer.importDesign(call);
+}
+
+/** File > Import subassembly...: resolves to the new meta, or null. */
+export async function importSubassemblies() {
+  await ready();
+  return importer.importSubassemblies(call);
 }
 
 /** Choose another folder (or confirm this one), and start again on it. */

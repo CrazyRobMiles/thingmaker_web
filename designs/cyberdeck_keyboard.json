@@ -24,7 +24,7 @@
       "decorations": {
         "bottom": {
           "image": {
-            "file": "D:\\GitHub\\thingmaker\\images\\overhead.png",
+            "file": "images/overhead.png",
             "zoom": 2.5,
             "angle": 120.0,
             "across": 20.0,
@@ -54,7 +54,7 @@
       "decorations": {
         "bottom": {
           "image": {
-            "file": "D:\\GitHub\\thingmaker\\images\\camera_outline.png",
+            "file": "images/camera_outline.png",
             "zoom": 2.0,
             "angle": 195.0,
             "threshold": 133.0

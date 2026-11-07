@@ -1,0 +1,90 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Untitled",
+  "cases": [
+    {
+      "id": "box",
+      "style": "Rounded",
+      "width": 63.0,
+      "depth": 96.6,
+      "height": 98.5,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "fit_height": true,
+      "position": [
+        18.5,
+        -8.3,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "smallspeaker1",
+      "type": "SmallSpeaker",
+      "case": "box",
+      "surface": "right",
+      "mount": "inside",
+      "x": 26.8,
+      "y": 38.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "batterycompartment1",
+      "type": "BatteryCompartment",
+      "case": "box",
+      "surface": "bottom",
+      "mount": "outside",
+      "x": 3.2,
+      "y": 0.5,
+      "rotation": 0,
+      "params": {
+        "back": "plate"
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pixelringlightpipes1",
+      "type": "PixelRingLightPipes",
+      "case": "box",
+      "surface": "left",
+      "mount": "inside",
+      "x": 30.25,
+      "y": 44.5,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "smallspeaker2",
+      "type": "SmallSpeaker",
+      "case": "box",
+      "surface": "left",
+      "mount": "inside",
+      "x": 12.35,
+      "y": 26.5,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ],
+  "subassemblies": []
+}

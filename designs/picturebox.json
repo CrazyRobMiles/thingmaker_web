@@ -24,7 +24,7 @@
       "decorations": {
         "bottom": {
           "image": {
-            "file": "D:\\GitHub\\thingmaker\\images\\camera_outline.png",
+            "file": "images/camera_outline.png",
             "zoom": 2.0,
             "angle": 60.0
           }

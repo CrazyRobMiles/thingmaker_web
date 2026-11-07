@@ -6,6 +6,7 @@
 import * as api from "./api.js";
 import * as dialogs from "./dialogs.js";
 import { el } from "./dialogs.js";
+import { byCategory } from "./groups.js";
 import { renderProps, SNAP } from "./props.js";
 import * as recovery from "./recovery.js";
 import { View, matrix4, meshGeometry, parseStl, surfaceAt } from "./scene.js";
@@ -45,7 +46,7 @@ const $ = (sel) => document.querySelector(sel);
 const view3d = new View($("#viewport"), $("#axes"));
 let liveTimer = null;
 // For poking at from the browser's developer tools.
-window.thingmaker = { state, view: view3d };
+window.thingmaker = { state, view: view3d, select };
 
 // -- status bar --
 
@@ -379,11 +380,11 @@ function propsContext() {
 
 /** Choose a picture for a decoration: the path to put in the design. */
 async function browsePicture(current) {
-  const start = current && api.pictureFolder ? await api.pictureFolder(current) : current;
+  const start = current ? await api.pictureFolder(current) : current;
   const chosen = await dialogs.browse({ title: "Choose a picture", filter: "image",
     dir: start ? start.replace(/[\\/][^\\/]*$/, "") : null, upload: { accept: "image/*", to: "images" } });
-  // (The web version writes it so the Python thingmaker can find it too.)
-  return chosen && api.storedPicturePath ? api.storedPicturePath(chosen) : chosen;
+  // (Relative to the thingmaker folder, so the design works on any computer.)
+  return chosen ? api.storedPicturePath(chosen) : chosen;
 }
 
 function rebuildProps_() {
@@ -454,10 +455,13 @@ async function addPlacementDialog(kind = "device") {
   if (result) addPlacement(result.type, result.case, result.surface, result.mount, null, result.stick);
 }
 
-function addPlacement(type, caseId, surface, mount, centre = null, stick = null) {
+/** Add a `type` on the `mount` side of a surface, at `centre` - or failing
+that where the surface was last clicked - measured on the side it was
+clicked on (`clickedMount`). */
+function addPlacement(type, caseId, surface, mount, centre = null, stick = null, clickedMount = mount) {
   const last = state.lastClickUV;
-  if (centre === null && last && last[0] === caseId && last[1] === surface && last[2] === mount) centre = last[3];
-  return change({ op: "add_placement", type, case: caseId, surface, mount, centre, stick: stick || [] });
+  if (centre === null && last && last[0] === caseId && last[1] === surface) [centre, clickedMount] = [last[3], last[2]];
+  return change({ op: "add_placement", type, case: caseId, surface, mount, centre, centre_mount: clickedMount, stick: stick || [] });
 }
 
 function setStick(id, side, on) {
@@ -605,9 +609,13 @@ function contextMenu(x, y) {
     select(["surface", caseId, name, mount]);
     for (const kind of ["device", "subassembly"]) {
       const names = kind === "device" ? state.meta.devices : state.meta.subassemblies;
-      const entries = names.map((n) => menuItem(state.meta.types[n].displayName, () => addPlacement(n, caseId, name, mount, uv)));
+      // (Each device goes on its own side of the surface - inside, mostly - whichever was clicked.)
+      const entry = (n) => menuItem(state.meta.types[n].displayName,
+        () => addPlacement(n, caseId, name, state.meta.types[n].defaultMount || mount, uv, null, mount));
+      const groups = byCategory(state.meta, names);
+      const entries = groups.length < 2 ? names.map(entry) : groups.map(([label, members]) => subMenu(label, members.map(entry)));
       if (!entries.length) entries.push(menuItem("(none yet - File > New subassembly...)", () => {}, { disabled: true }));
-      items.push(subMenu(`Add ${kind} to ${caseId} ${name} (${mount})`, entries));
+      items.push(subMenu(kind === "device" ? `Add device to ${caseId} ${name}` : `Add ${kind} to ${caseId} ${name} (${mount})`, entries));
     }
   } else if (state.printView) {
     items.push(menuItem("Open STL files...", openStlDialog));
@@ -1042,7 +1050,27 @@ if (api.changeFolder) {
       location.reload();
     }
   };
-  for (const b of document.querySelectorAll('[data-action="change-folder"], [data-action="fonts"], [data-action-group="folder"]')) b.hidden = false;
+  // Bringing designs and subassemblies in from elsewhere on the computer.
+  ACTIONS["import-design"] = async () => {
+    if (!(await confirmDiscard())) return;
+    const result = await api.importDesign();
+    if (!result) return;
+    if (result.meta) {
+      state.meta = result.meta;
+      view3d.forgetStls();
+    }
+    await openPath(result.path);
+    status(`Imported into ${result.path}`, 8000);
+  };
+  ACTIONS["import-subassembly"] = async () => {
+    const meta = await api.importSubassemblies();
+    if (!meta) return;
+    state.meta = meta;
+    view3d.forgetStls();
+    refresh();
+  };
+  for (const b of document.querySelectorAll('[data-action="change-folder"], [data-action="fonts"], [data-action="import-design"], ' +
+    '[data-action="import-subassembly"], [data-action-group="folder"]')) b.hidden = false;
 }
 
 for (const b of document.querySelectorAll("[data-action]")) {
