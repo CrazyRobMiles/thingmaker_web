@@ -17,7 +17,7 @@
     "start": "node server.js",
     "build": "node build.js",
     "template": "node template.js",
-    "test": "node --test test/",
+    "test": "node --test",
     "parity": "node tools/parity.mjs",
     "build:static": "node tools/build-static.mjs",
     "serve:static": "node tools/serve-static.mjs"
