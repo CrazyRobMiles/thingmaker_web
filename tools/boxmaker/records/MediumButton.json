@@ -1,0 +1,44 @@
+{
+ "class": "MediumButton",
+ "partType": "MediumButton",
+ "bases": [
+  "Device"
+ ],
+ "size": [
+  41,
+  37
+ ],
+ "settings": {
+  "xMargin": 0.5,
+  "yMargin": 0.5
+ },
+ "constants": {
+  "socketRadius": 15.3
+ },
+ "ops": [
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 15.3,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     20.5,
+     18.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

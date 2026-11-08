@@ -1,0 +1,44 @@
+{
+ "class": "HugeButton",
+ "partType": "HugeButton",
+ "bases": [
+  "Device"
+ ],
+ "size": [
+  65,
+  65
+ ],
+ "settings": {
+  "xMargin": 0.5,
+  "yMargin": 0.5
+ },
+ "constants": {
+  "socketRadius": 14
+ },
+ "ops": [
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 14,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     32.5,
+     32.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

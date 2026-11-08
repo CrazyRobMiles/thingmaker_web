@@ -298,10 +298,10 @@ The design is laid out again after every change.
   case needs for its devices' footprints, or the largest
   `min_width`/`min_depth`. A case with its own position keeps its centre
   where it was as it grows or shrinks; a hinged case follows its hinge.
-- **Case heights** stay as they're set, and a device too tall for its case
-  is reported - unless the case is set to **Fit height to what's in it**
-  (`"fit_height": true`). Then its height is worked out too, each case its
-  own:
+- **Case heights** are worked out for each case on its own. One set to
+  **Fit height to what's in it** (`"fit_height": true`) is exactly as high
+  as what's in it needs; any other keeps the height it's set to, but grows
+  when what's in it needs more (it doesn't shrink back). Either way:
   - Devices on its walls get their footprints up the wall, laid out as
     width and depth are, with their `margin_bottom`/`margin_top` - but
     each centred in the height it has, unless it's over or under another,
@@ -479,8 +479,8 @@ So far:
 | Displays | small OLED (`SmallOled`), small OLED with window (`SmallOledHole`), 14-segment display (`Alpha14Seg`) |
 | Sound | small speaker (`SmallSpeaker`), audio amplifier (`AudioAmplifier`) |
 | Lights | pixel ring with light pipes (`PixelRingLightPipeLid`), 8x8 NeoPixel matrices with light pipes (`NeoPixel8x8LidLightPipe`, `SmallNeoPixel8x8LidLightPipe`) |
-| Buttons and controls | rotary pot (`RotaryPot`), joystick (`Joystick`) |
-| Sensors | BME280 (`BME280`), CCS811 (`CCS811`), PIR motion sensors (`PIRSensor`, `SmallPIRSensor`) |
+| Buttons and controls | rotary pot (`RotaryPot`), joystick (`Joystick`), push buttons (`MediumButton`, `BigButton` by hand, `HugeButton`) |
+| Sensors | BME280 (`BME280`), CCS811 (`CCS811`), PIR motion sensors (`PIRSensor`, `SmallPIRSensor`), RFID reader (`RFIDSensorLidHole`, by hand) |
 | Power | DC to DC converter (`DCtoDC`) |
 
 ## Compatibility

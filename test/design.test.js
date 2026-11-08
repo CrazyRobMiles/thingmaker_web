@@ -129,6 +129,9 @@ test("the problems list finds collisions, overhangs and short lids", () => {
   design.placements.push(new Placement("one", "Pi3APlus", "a", { stick: ["left"] }));
   design.placements.push(new Placement("speaker", "SmallSpeaker", "a", { surface: "left", mount: "inside", stick: ["bottom"] }));
   design.relayout();
+  // The layout puts the speaker over the Pi; pushed down onto it, as a design file could have it.
+  assert.ok(!design.warnings().some((p) => /collides/.test(p)));
+  design.placements[1].y = 0;
   const problems = kernel.scope(() => design.warnings());
   assert.ok(problems.some((p) => p.includes("speaker collides with one")), problems.join("\n"));
   assert.ok(problems.some((p) => p.includes("too short for the retaining screws")), problems.join("\n"));
@@ -169,7 +172,12 @@ test("a case can fit its height to what's on its walls, floor and lid", () => {
   assert.equal(wall.cases[0].height, 53.1);
   assert.deepEqual(wall.warnings(), []);
   assert.ok(!wall.warnings().some((w) => /overhangs|sticks out/.test(w)));
-  assert.equal(sized(false, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" })).cases[0].height, 20.0);
+  // Without fit_height, the height it was given - but grown, rather than leave the speaker sticking out of it.
+  assert.equal(sized(false, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" })).cases[0].height, 53.1);
+  const tall = new Design({ cases: [boxCase("case", { height: 70.0 })] });
+  tall.placements.push(new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" }));
+  tall.relayout();
+  assert.equal(tall.cases[0].height, 70.0);
   // A Pico (7.8mm, to the top of its USB socket) on the floor under a pixel ring hanging 8.4mm from the lid, 1mm apart.
   const stack = sized(true, new Placement("pico", "Pico", "case"),
     new Placement("ring", "PixelRingLightPipes", "case", { surface: "top", mount: "inside" }));
