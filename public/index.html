@@ -59,7 +59,13 @@
   <label class="check" title="Show the real parts, rebuilt as you edit"><input type="checkbox" data-option="built" checked> Built model</label>
   <span class="sep"></span>
   <button type="button" data-action="fit" title="Fit the whole design in the view (F)">Fit view</button>
-  <button type="button" data-action="about" class="about-button" title="About thingmaker">About</button>
+  <div class="menu help-menu" id="help-menu">
+    <button type="button" class="menu-button">Help &#9662;</button>
+    <div class="menu-items">
+      <button type="button" data-action="help">Editor help<span class="key">F1</span></button>
+      <button type="button" data-action="about">About thingmaker</button>
+    </div>
+  </div>
 </header>
 
 <main id="main">

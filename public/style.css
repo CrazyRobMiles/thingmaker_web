@@ -60,7 +60,8 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
   border-bottom: 1px solid var(--border);
 }
 #toolbar .sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 4px; }
-#toolbar .about-button { margin-left: auto; }
+#toolbar .help-menu { margin-left: auto; }
+#toolbar .help-menu .menu-items { left: auto; right: 0; min-width: 180px; }
 #toolbar .check { display: inline-flex; align-items: center; gap: 3px; padding: 0 4px; cursor: pointer; user-select: none; }
 .toggle-group { display: inline-flex; }
 .toggle-group button { border-radius: 0; }
@@ -261,3 +262,12 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .modal .about ul { margin: 0; padding-left: 18px; }
 .modal .about a { color: var(--accent); }
 .modal .about .version { color: var(--muted); }
+.modal .help { width: 680px; max-width: 100%; line-height: 1.5; }
+.modal .help h3 { font-size: 13px; margin: 14px 0 4px; }
+.modal .help section:first-child h3 { margin-top: 4px; }
+.modal .help p { margin: 0 0 6px; }
+.modal .help ul { margin: 0; padding-left: 18px; }
+.modal .help li { margin-bottom: 3px; }
+.modal .help table { border-collapse: collapse; }
+.modal .help th { text-align: left; font-weight: 600; padding: 2px 16px 2px 0; white-space: nowrap; vertical-align: top; }
+.modal .help td { padding: 2px 0; }

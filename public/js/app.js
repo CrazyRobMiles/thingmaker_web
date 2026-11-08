@@ -7,6 +7,7 @@ import * as api from "./api.js";
 import * as dialogs from "./dialogs.js";
 import { el } from "./dialogs.js";
 import { byCategory } from "./groups.js";
+import { helpDialog } from "./help.js";
 import { renderProps, SNAP } from "./props.js";
 import * as recovery from "./recovery.js";
 import { View, matrix4, meshGeometry, parseStl, surfaceAt } from "./scene.js";
@@ -635,8 +636,7 @@ function contextMenu(x, y) {
 
 document.addEventListener("pointerdown", (e) => {
   if (!menuEl.hidden && !menuEl.contains(e.target)) hideContextMenu();
-  const fileMenu = $("#file-menu");
-  if (!fileMenu.contains(e.target)) fileMenu.classList.remove("open");
+  for (const menu of document.querySelectorAll(".menu")) if (!menu.contains(e.target)) menu.classList.remove("open");
 });
 
 function fit() {
@@ -655,6 +655,11 @@ document.addEventListener("keydown", (e) => {
   const ctrl = e.ctrlKey || e.metaKey;
   const key = e.key.toLowerCase();
   if (e.key === "Escape") hideContextMenu();
+  if (e.key === "F1") {
+    e.preventDefault();
+    ACTIONS.help();
+    return;
+  }
   if (e.key === "F5") {
     e.preventDefault();
     build();
@@ -717,7 +722,7 @@ async function newDesign() {
   if (!(await confirmDiscard())) return;
   const name = await dialogs.prompt("New design", "Name", "Untitled");
   if (name === null) return;
-  await resetState(await api.post("/api/new", { name }), null);
+  await resetState(await api.post("/api/new", { name, withCase: true }), null);
 }
 
 async function designsDir() {
@@ -1035,6 +1040,7 @@ const ACTIONS = {
   undo, redo, "add-case": addCaseDialog, "add-hinge": addHingeDialog,
   "add-device": () => addPlacementDialog("device"), "add-subassembly": () => addPlacementDialog("subassembly"),
   delete: deleteSelected, build, fit, "earlier-versions": earlierVersions, about: () => dialogs.aboutDialog(),
+  help: () => helpDialog({ web: Boolean(api.changeFolder) }),
 };
 // The web version's own commands (choosing the folder it works in, and
 // putting fonts in it).
@@ -1075,11 +1081,13 @@ if (api.changeFolder) {
 
 for (const b of document.querySelectorAll("[data-action]")) {
   b.addEventListener("click", () => {
-    $("#file-menu").classList.remove("open");
+    for (const menu of document.querySelectorAll(".menu")) menu.classList.remove("open");
     ACTIONS[b.dataset.action]();
   });
 }
-$("#file-menu .menu-button").addEventListener("click", () => $("#file-menu").classList.toggle("open"));
+for (const menu of document.querySelectorAll(".menu")) {
+  menu.querySelector(".menu-button").addEventListener("click", () => menu.classList.toggle("open"));
+}
 for (const b of document.querySelectorAll("[data-view]")) {
   b.addEventListener("click", () => {
     const on = b.dataset.view === "print";
@@ -1125,7 +1133,7 @@ async function start() {
   const unsaved = await recovery.unsaved();
   state.meta = await api.get("/api/meta");
   const startup = await api.get("/api/startup");
-  await resetState(await api.post("/api/new", { name: "Untitled" }), null);
+  await resetState(await api.post("/api/new", { name: "Untitled", withCase: true }), null);
   if (!(await offerUnsaved(unsaved))) {
     if (startup.designPath) await openPath(startup.designPath);
     else if (startup.stlSource) await showStlSource(startup.stlSource);

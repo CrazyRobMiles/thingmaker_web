@@ -5,7 +5,7 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { test } from "node:test";
-import { folders } from "../lib/api.js";
+import { createApi, folders } from "../lib/api.js";
 import * as catalogue from "../lib/catalogue.js";
 import * as imports from "../lib/imports.js";
 
@@ -73,4 +73,11 @@ test("a design comes in with the pictures it was given, named relative to the fo
   assert.equal(again, path.join(where.designs, "picturebox_2.json"));
   assert.deepEqual(fs.readdirSync(where.images).filter((n) => n.startsWith("camera")), ["camera.png"]);
   assert.throws(() => imports.readDesign("{}"), /isn't a thingmaker design/);
+});
+
+test("a new design starts empty, or with one empty case", async () => {
+  const routes = createApi(folders(fs.mkdtempSync(path.join(os.tmpdir(), "tm-new-"))));
+  assert.deepEqual(routes["POST /api/new"]({ body: { name: "x" } }).design.cases, []);
+  const [kase] = routes["POST /api/new"]({ body: { name: "x", withCase: true } }).design.cases;
+  assert.equal(kase.id, "case1");
 });

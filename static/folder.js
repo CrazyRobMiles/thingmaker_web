@@ -40,6 +40,29 @@ async function setUp(handle, report) {
   }
 }
 
+/** This browser can't let a page work in a folder: say which can, and stay
+(it never resolves - there's nothing thingmaker can do without one). */
+function unsupportedBrowser() {
+  const ua = navigator.userAgent;
+  const mobile = navigator.userAgentData ? navigator.userAgentData.mobile : /Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+  const text = mobile
+    ? "thingmaker keeps your designs in a folder on your computer, and phone and tablet browsers can't let a web " +
+      "page do that. Open it on a desktop or laptop computer, in Google Chrome or Microsoft Edge."
+    : navigator.brave
+      ? "thingmaker keeps your designs in a folder on this computer. Brave can let a page do that, but it's turned " +
+        "off: open brave://flags/#file-system-access-api, set it to Enabled, relaunch Brave and come back - or use " +
+        "Google Chrome or Microsoft Edge."
+      : "thingmaker keeps your designs in a folder on this computer, which needs a browser that lets web pages open " +
+        "folders: Google Chrome or Microsoft Edge (or another browser built on Chromium, such as Opera or Vivaldi) " +
+        "on a desktop or laptop computer. Firefox and Safari can't do this yet.\n\n" +
+        "Or run thingmaker on this computer with Node.js instead (see github.com/CrazyRobMiles/thingmaker_web): " +
+        "that version works in any browser.";
+  return modal("thingmaker needs Chrome or Edge", () => ({
+    body: el("div", { class: "note" }, text),
+    buttons: [],
+  }));
+}
+
 /** Ask for a folder (or confirm the one used last time). Resolves to
 {handle, name}. */
 export async function connect({ change = false } = {}) {
@@ -51,13 +74,7 @@ export async function connect({ change = false } = {}) {
       buttons: [],
     }));
   }
-  if (!("showDirectoryPicker" in window)) {
-    await modal("thingmaker needs Chrome or Edge", () => ({
-      body: el("div", { class: "note" }, "This version of thingmaker keeps your designs in a folder on this computer, " +
-        "which needs a browser that lets web pages open folders: Google Chrome or Microsoft Edge."),
-      buttons: [],
-    }));
-  }
+  if (!("showDirectoryPicker" in window)) await unsupportedBrowser();
   let saved = null;
   try {
     saved = await idb.get("settings", KEY);
