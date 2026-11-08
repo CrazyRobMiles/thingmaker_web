@@ -13,7 +13,7 @@ to DEFINITIONS in lib/library.js. */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { companions, recognise, rings } from "./recognise.mjs";
+import { companions, grids, recognise, rings } from "./recognise.mjs";
 
 const ROOT = path.dirname(path.dirname(path.dirname(fileURLToPath(import.meta.url))));
 const args = process.argv.slice(2);
@@ -61,8 +61,9 @@ const definition = {
   board: { width: record.size[0], depth: record.size[1], thickness: 1.6 },
   pillars,
   openings: found.openings.length
-    ? rings(found.openings, [record.size[0] / 2.0, record.size[1] / 2.0]).map((o) => ({ description: "TODO: what it's for", ...o }))
+    ? rings(grids(found.openings), [record.size[0] / 2.0, record.size[1] / 2.0]).map((o) => ({ description: "TODO: what it's for", ...o }))
     : undefined,
+  blocks: found.blocks.length ? found.blocks : undefined,
   parts: [],
   connectors: {},
 };
@@ -101,5 +102,5 @@ fs.writeFileSync(file, text);
 const recordFile = path.join(ROOT, "tools", "boxmaker", "records", `${className}.json`);
 fs.mkdirSync(path.dirname(recordFile), { recursive: true });
 fs.writeFileSync(recordFile, `${JSON.stringify(record, null, 1)}\n`);
-process.stdout.write(`Drafted ${path.relative(ROOT, file)} (${found.pillars.at.length} pillars, ${found.openings.length} openings, ` +
+process.stdout.write(`Drafted ${path.relative(ROOT, file)} (${found.pillars.at.length} pillars, ${found.openings.length} openings, ${found.blocks.length} blocks, ` +
   `${found.unrecognised.length} things not understood) and kept its record in ${path.relative(ROOT, recordFile)}\n`);

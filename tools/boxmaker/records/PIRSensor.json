@@ -1,0 +1,114 @@
+{
+ "class": "PIRSensor",
+ "partType": "PIRSensor",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  35,
+  25
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 2.5,
+  "pillarHeight": 4,
+  "holeRadius": 0.75,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 25,
+  "boardWidth": 35,
+  "holeXSpacing": 30,
+  "sensorHoleRadius": 11.5
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     2.5,
+     12.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.75,
+    "h": 4,
+    "at": [
+     2.5,
+     12.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     32.5,
+     12.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.75,
+    "h": 4,
+    "at": [
+     32.5,
+     12.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

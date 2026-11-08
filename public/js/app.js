@@ -1034,7 +1034,7 @@ const ACTIONS = {
   "new-subassembly": newSubassembly, "edit-subassembly": editSubassembly,
   undo, redo, "add-case": addCaseDialog, "add-hinge": addHingeDialog,
   "add-device": () => addPlacementDialog("device"), "add-subassembly": () => addPlacementDialog("subassembly"),
-  delete: deleteSelected, build, fit, "earlier-versions": earlierVersions,
+  delete: deleteSelected, build, fit, "earlier-versions": earlierVersions, about: () => dialogs.aboutDialog(),
 };
 // The web version's own commands (choosing the folder it works in, and
 // putting fonts in it).

@@ -1,0 +1,195 @@
+{
+ "class": "SmallPIRSensor",
+ "partType": "PIRSensor",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  19,
+  19
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 2.5,
+  "pillarHeight": 0.5,
+  "holeRadius": 1.2,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 19,
+  "boardWidth": 19,
+  "holeXSpacing": 15,
+  "sensorHoleRadius": 5,
+  "outerHoleRadius": 6.3,
+  "outerHoleDepth": 1.3,
+  "screwholeDepth": 2
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 0.5,
+     "t": 1
+    },
+    "at": [
+     2,
+     9.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.2,
+    "h": 0.5,
+    "at": [
+     2,
+     9.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.2,
+    "h": 2,
+    "at": [
+     2,
+     9.5,
+     -2
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 0.5,
+     "t": 1
+    },
+    "at": [
+     17,
+     9.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.2,
+    "h": 0.5,
+    "at": [
+     17,
+     9.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.2,
+    "h": 2,
+    "at": [
+     17,
+     9.5,
+     -2
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 5,
+    "h": {
+     "c": 100,
+     "t": 1
+    },
+    "at": [
+     9.5,
+     9.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     -1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 6.3,
+    "h": {
+     "c": 100,
+     "t": 1
+    },
+    "at": [
+     9.5,
+     9.5,
+     -1.3
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

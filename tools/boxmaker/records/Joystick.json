@@ -1,0 +1,141 @@
+{
+ "class": "Joystick",
+ "partType": "Joystick",
+ "bases": [
+  "Device"
+ ],
+ "size": [
+  76,
+  76
+ ],
+ "settings": {
+  "xMargin": 0.5,
+  "yMargin": 0.5
+ },
+ "constants": {
+  "socketRadius": 11,
+  "fittingRadius": 2.5
+ },
+ "ops": [
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 11,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     38,
+     38,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     15.5,
+     15.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     60.5,
+     15.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     60.5,
+     60.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     15.5,
+     60.5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

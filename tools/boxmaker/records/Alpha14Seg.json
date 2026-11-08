@@ -1,0 +1,226 @@
+{
+ "class": "Alpha14Seg",
+ "partType": "Alpha14Seg",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  52,
+  28
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 2.5,
+  "pillarHeight": 4,
+  "holeRadius": 0.6,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 28,
+  "boardWidth": 52,
+  "holeXSpacing": 47,
+  "holeYSpacing": 24,
+  "holeXInset": 2.032,
+  "holeYInset": 2.032,
+  "pixelHeight": 22,
+  "pixelWidth": 52,
+  "dummyHeight": 15
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     2.032,
+     2.032,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.6,
+    "h": 4,
+    "at": [
+     2.032,
+     2.032,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     2.032,
+     26.032,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.6,
+    "h": 4,
+    "at": [
+     2.032,
+     26.032,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     49.032,
+     26.032,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.6,
+    "h": 4,
+    "at": [
+     49.032,
+     26.032,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     49.032,
+     2.032,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.6,
+    "h": 4,
+    "at": [
+     49.032,
+     2.032,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "box",
+    "size": [
+     52,
+     22,
+     {
+      "c": 4,
+      "t": 1
+     }
+    ],
+    "at": [
+     0,
+     3,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "angle": 0
+   }
+  }
+ ]
+}

@@ -1,0 +1,139 @@
+{
+ "class": "CCS811",
+ "partType": "CCS811",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  21,
+  15.5
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 2.5,
+  "pillarHeight": 4,
+  "holeRadius": 1,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 15.5,
+  "boardWidth": 21,
+  "holeXSpacing": 15,
+  "holeYOffset": 12,
+  "holeDiam": 3
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     3,
+     12,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1,
+    "h": 4,
+    "at": [
+     3,
+     12,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 2.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     18,
+     12,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1,
+    "h": 4,
+    "at": [
+     18,
+     12,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3,
+    "h": {
+     "c": 0,
+     "t": 1
+    },
+    "at": [
+     10.5,
+     12,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

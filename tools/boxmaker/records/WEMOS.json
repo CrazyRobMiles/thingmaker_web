@@ -1,0 +1,154 @@
+{
+ "class": "WEMOS",
+ "partType": "WEMOS",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  38,
+  50
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 3.5,
+  "pillarHeight": 4,
+  "holeRadius": 1.4,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 50,
+  "boardWidth": 38,
+  "holeXSpacing": 31,
+  "holeYSpacing": 30,
+  "pillarInset": 32,
+  "mountingHoleInset": 38.2,
+  "mountingHoleSpacing": 15,
+  "postWidth": 5,
+  "postHeight": 5,
+  "postDepth": 2.5
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "box",
+    "size": [
+     5,
+     5,
+     2.5
+    ],
+    "at": [
+     9,
+     30.75,
+     0
+    ],
+    "angle": 0
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "box",
+    "size": [
+     5,
+     5,
+     2.5
+    ],
+    "at": [
+     24,
+     30.75,
+     0
+    ],
+    "angle": 0
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     11.5,
+     38.2,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.4,
+    "h": 4,
+    "at": [
+     11.5,
+     38.2,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3.5,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     26.5,
+     38.2,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.4,
+    "h": 4,
+    "at": [
+     26.5,
+     38.2,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  }
+ ]
+}

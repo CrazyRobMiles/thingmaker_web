@@ -62,13 +62,47 @@ export function recognise(record) {
         openings.push(s.kind === "box"
           ? { box: [lin(s.at[0]).c, lin(s.at[1]).c, lin(s.size[0]).c, lin(s.size[1]).c], skin }
           : { circle: [lin(s.at[0]).c, lin(s.at[1]).c, s.r], skin });
+        // A window cut up to the pillars' tops, trimming any it overlaps.
+        if (s.kind === "box" && pillars.at.length && reach.c > 1e-9 && near(reach.c, pillars.height)) {
+          openings[openings.length - 1].throughPillars = true;
+        }
         used.add(i);
       }
     // ... or down from the inside face, right through.
     } else if (s.kind === "cylinder" && down(s) && is(s.at[2], 0, 0) && near(h.t, 1) && h.c >= 0) {
       openings.push({ circle: [lin(s.at[0]).c, lin(s.at[1]).c, s.r], skin: 0 });
       used.add(i);
+    // ... or a pocket: down only `depth` into the inside face (a recess for a lens's rim, say).
+    } else if ((s.kind === "box" || (s.kind === "cylinder" && up(s))) && near(lin(s.at[2]).t, 0) && lin(s.at[2]).c < 0) {
+      const depth = -lin(s.at[2]).c;
+      const reach = s.kind === "box" ? lin(s.size[2]) : h;
+      if (reach.t >= 0 && reach.c >= depth - 1e-9) {
+        openings.push(s.kind === "box"
+          ? { box: [lin(s.at[0]).c, lin(s.at[1]).c, lin(s.size[0]).c, lin(s.size[1]).c], depth }
+          : { circle: [lin(s.at[0]).c, lin(s.at[1]).c, s.r], depth });
+        used.add(i);
+      }
     }
+  });
+  // A light pipe made the other way: a solid post up from the inside face,
+  // with an opening (the pipe's inside) cut up through it.
+  ops.forEach((op, i) => {
+    const s = op.shape;
+    if (used.has(i) || op.op !== "fuse" || s.kind !== "cylinder" || !up(s) || !is(s.at[2], 0, 0) || !near(lin(s.h).t, 0)) return;
+    const opening = openings.find((o) => o.circle && !o.pipe && o.skin !== undefined && near(o.circle[0], lin(s.at[0]).c) &&
+      near(o.circle[1], lin(s.at[1]).c) && o.circle[2] < s.r);
+    if (!opening) return;
+    opening.pipe = { height: round(lin(s.h).c), wall: round(s.r - opening.circle[2]) };
+    opening.circle[2] = s.r;
+    used.add(i);
+  });
+  // A block: a box standing on the inside face (a support with no screw).
+  const blocks = [];
+  ops.forEach((op, i) => {
+    const s = op.shape;
+    if (used.has(i) || op.op !== "fuse" || s.kind !== "box" || !is(s.at[2], 0, 0) || !near(lin(s.size[2]).t, 0) || s.angle) return;
+    blocks.push({ x: lin(s.at[0]).c, y: lin(s.at[1]).c, w: lin(s.size[0]).c, d: lin(s.size[1]).c, h: lin(s.size[2]).c });
+    used.add(i);
   });
   // A light pipe: a tube fused round an opening, from the same place up.
   ops.forEach((op, i) => {
@@ -84,10 +118,43 @@ export function recognise(record) {
     opening.pipe = { height: round(lin(outer.at[2]).c + lin(outer.h).c), wall: round(outer.r - inner.r) };
     used.add(i);
   });
-  return { pillars, openings, unrecognised: ops.filter((_, i) => !used.has(i)) };
+  return { pillars, openings, blocks, unrecognised: ops.filter((_, i) => !used.has(i)) };
 }
 
 const round = (n) => Math.round(n * 1e6) / 1e6;
+const shapeKey = (o) => JSON.stringify([o.circle[2], o.skin, o.depth, o.pipe || null]);
+
+/** Openings as grids where they make them: circles of the same size (and
+skin, depth and pipe) in nx columns by ny rows, evenly spaced, become one
+{grid: [x0, y0, dx, dy, nx, ny, r]}. */
+export function grids(openings) {
+  const out = [];
+  const groups = new Map();
+  for (const o of openings) {
+    if (!o.circle) {
+      out.push(o);
+      continue;
+    }
+    if (!groups.has(shapeKey(o))) groups.set(shapeKey(o), []);
+    groups.get(shapeKey(o)).push(o);
+  }
+  const steps = (values) => {
+    const v = [...new Set(values.map(round))].sort((a, b) => a - b);
+    const d = v.length > 1 ? v[1] - v[0] : 0;
+    return v.every((x, i) => near(x, v[0] + i * d)) ? [v[0], round(d), v.length] : null;
+  };
+  for (const group of groups.values()) {
+    const xs = steps(group.map((o) => o.circle[0]));
+    const ys = steps(group.map((o) => o.circle[1]));
+    if (group.length < 4 || !xs || !ys || xs[2] < 2 || ys[2] < 2 || xs[2] * ys[2] !== group.length) {
+      out.push(...group);
+      continue;
+    }
+    const { circle, ...rest } = group[0];
+    out.push({ grid: [xs[0], ys[0], xs[1], ys[1], xs[2], ys[2], circle[2]], ...rest });
+  }
+  return out;
+}
 
 /** Openings as rings where they make them: circles of the same size (and
 skin and pipe) evenly spaced round `centre` become one {ring: [cx, cy,

@@ -6,6 +6,7 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import * as api from "./api.js";
 import { typeSelect } from "./groups.js";
 import { COLORS, parseStl } from "./scene.js";
+import { VERSION } from "./version.js";
 
 export function el(tag, attrs = {}, ...children) {
   const e = document.createElement(tag);
@@ -72,6 +73,22 @@ export function modal(title, build) {
 
 export function message(title, text) {
   return modal(title, () => ({ body: el("div", { class: "note" }, text), buttons: [["OK", true, "primary"]] }));
+}
+
+/** The About button: what thingmaker is, who made it and where it lives. */
+export function aboutDialog() {
+  const link = (href, text) => el("a", { href, target: "_blank", rel: "noopener" }, text);
+  return modal("About thingmaker", () => ({
+    body: el("div", { class: "about" },
+      el("p", {}, "thingmaker designs 3D-printable cases for electronics: put devices and subassemblies on a case's surfaces, and it builds the parts as STL files ready to print."),
+      el("p", { class: "version" }, `Version ${VERSION}`),
+      el("p", {}, "Made by Rob Miles."),
+      el("ul", {},
+        el("li", {}, "Rob's blog: ", link("https://www.robmiles.com", "www.robmiles.com")),
+        el("li", {}, "Source code, and where to report problems: ",
+          link("https://github.com/CrazyRobMiles/thingmaker_web", "github.com/CrazyRobMiles/thingmaker_web")))),
+    buttons: [["OK", true, "primary"]],
+  }));
 }
 
 /** Yes / no: resolves true for yes. */

@@ -1,0 +1,54 @@
+{
+ "class": "RotaryPot",
+ "partType": "RotaryPot",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  19,
+  19
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 2.5,
+  "pillarHeight": 0.5,
+  "holeRadius": 1.2,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 19,
+  "boardWidth": 19,
+  "holeXSpacing": 15,
+  "sensorHoleRadius": 3.7,
+  "outerHoleRadius": 6.3,
+  "outerHoleDepth": 1.3,
+  "screwholeDepth": 2
+ },
+ "ops": [
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3.7,
+    "h": {
+     "c": 100,
+     "t": 1
+    },
+    "at": [
+     9.5,
+     9.5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     -1
+    ]
+   }
+  }
+ ]
+}

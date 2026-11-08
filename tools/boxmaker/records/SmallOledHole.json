@@ -1,0 +1,227 @@
+{
+ "class": "SmallOledHole",
+ "partType": "SmallOledHole",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  27.3,
+  27.8
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 1.5,
+  "pillarHeight": 2,
+  "holeRadius": 0.5,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 27.8,
+  "oledHeight": 19.268,
+  "boardWidth": 27.3,
+  "holeXInset": 2,
+  "holeYInset": 2,
+  "holeXSpacing": 23.3,
+  "holeYSpacing": 23.8,
+  "displayHeight": 10.864,
+  "displayXMargin": 2.478,
+  "displayYMargin": 6.366
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.5,
+    "h": {
+     "c": 2,
+     "t": 1
+    },
+    "at": [
+     2,
+     2,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.5,
+    "h": 2,
+    "at": [
+     2,
+     2,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.5,
+    "h": {
+     "c": 2,
+     "t": 1
+    },
+    "at": [
+     2,
+     25.8,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.5,
+    "h": 2,
+    "at": [
+     2,
+     25.8,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.5,
+    "h": {
+     "c": 2,
+     "t": 1
+    },
+    "at": [
+     25.3,
+     25.8,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.5,
+    "h": 2,
+    "at": [
+     25.3,
+     25.8,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1.5,
+    "h": {
+     "c": 2,
+     "t": 1
+    },
+    "at": [
+     25.3,
+     2,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 0.5,
+    "h": 2,
+    "at": [
+     25.3,
+     2,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "box",
+    "size": [
+     22.344,
+     10.864,
+     {
+      "c": 0,
+      "t": 1
+     }
+    ],
+    "at": [
+     2.478,
+     5.2,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "angle": 0
+   }
+  }
+ ]
+}

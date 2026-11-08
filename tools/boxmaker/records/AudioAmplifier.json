@@ -1,0 +1,225 @@
+{
+ "class": "AudioAmplifier",
+ "partType": "AudioAmplifier",
+ "bases": [
+  "PillarSupportedDevice",
+  "Device"
+ ],
+ "size": [
+  41,
+  41
+ ],
+ "settings": {
+  "pillarType": 2,
+  "pillarRadius": 3,
+  "pillarHeight": 4,
+  "holeRadius": 1,
+  "holeCounterSinkDepth": 1,
+  "holeCounterSinkRadius": 3,
+  "xMargin": 0,
+  "yMargin": 0
+ },
+ "constants": {
+  "boardHeight": 41,
+  "boardWidth": 41,
+  "connectorWidth": 55,
+  "connectorDepth": 21,
+  "connectorHeight": 21,
+  "connectorOverhang": 5,
+  "boardThickness": 3,
+  "holeIndent": 3.5,
+  "dummyHeight": 85,
+  "dummyWidth": 56,
+  "simSlotWidth": 13,
+  "simSlotHeight": 8,
+  "simSlotDepth": 20
+ },
+ "ops": [
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     3,
+     5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1,
+    "h": 4,
+    "at": [
+     3,
+     5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     38,
+     5,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1,
+    "h": 4,
+    "at": [
+     38,
+     5,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     3,
+     30,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1,
+    "h": 4,
+    "at": [
+     3,
+     30,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "fuse",
+   "shape": {
+    "kind": "cylinder",
+    "r": 3,
+    "h": {
+     "c": 4,
+     "t": 1
+    },
+    "at": [
+     38,
+     27,
+     {
+      "c": 0,
+      "t": -1
+     }
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 1,
+    "h": 4,
+    "at": [
+     38,
+     27,
+     0
+    ],
+    "dir": [
+     0,
+     0,
+     1
+    ]
+   }
+  },
+  {
+   "op": "cut",
+   "shape": {
+    "kind": "cylinder",
+    "r": 4.5,
+    "h": 1000,
+    "at": [
+     12,
+     5,
+     13
+    ],
+    "dir": [
+     0,
+     -1,
+     0
+    ]
+   }
+  }
+ ]
+}

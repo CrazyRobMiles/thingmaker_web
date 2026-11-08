@@ -46,16 +46,17 @@ test("every definition ported from boxmaker still has boxmaker's pillars and ope
     }
     // The same holes, in any order (a ring's are worked out, so to within a micron or so).
     const mm = (v) => Math.round(v * 1000);
-    const key = (o) => JSON.stringify([o.circle ? "circle" : "box", o.skin, o.pipe || null]);
+    const key = (o) => JSON.stringify([o.circle ? "circle" : "box", o.skin ?? null, o.depth ?? null, o.pipe || null, o.throughPillars || false]);
     const sorted = (list) => list.map((o) => ({ ...o, at: o.circle || o.box }))
       .sort((a, b) => key(a).localeCompare(key(b)) || mm(a.at[0]) - mm(b.at[0]) || mm(a.at[1]) - mm(b.at[1]));
-    const mineOpenings = sorted(expandOpenings(def.openings));
+    const mineOpenings = sorted(expandOpenings(def.openings).filter((o) => !o.byHand).map(({ description, ...o }) => o));
     const theirs = sorted(found.openings);
     assert.equal(mineOpenings.length, theirs.length, `${def.type}: number of openings`);
     mineOpenings.forEach((o, i) => {
       assert.equal(key(o), key(theirs[i]), `${def.type}: opening ${i}`);
       o.at.forEach((v, k) => assert.ok(Math.abs(v - theirs[i].at[k]) < 1e-4, `${def.type}: opening ${i}: ${o.at} isn't ${theirs[i].at}`));
     });
+    assert.deepEqual(def.blocks || [], found.blocks, `${def.type}: blocks`);
   }
 });
 
@@ -110,4 +111,24 @@ test("every device has a category, and the editor lists them by category, then n
   assert.equal(m.types.SmallSpeaker.category, "sound");
   assert.equal(m.types.PixelRingLightPipes.category, "light");
   assert.equal(m.types.M5StackKB2.category, "button");
+});
+
+test("every definition builds into a case, on the floor and on the lid, as one valid solid", () => {
+  for (const def of DEFINITIONS) {
+    for (const surface of ["bottom", "top"]) {
+      const design = new Design({ cases: [new CaseSpec("case", { style: "Square", height: 45.0 })] });
+      design.placements.push(new Placement("d", def.type, "case", { surface, mount: "inside" }));
+      design.relayout();
+      kernel.scope(() => {
+        const [shapes] = buildParts(design, { log: quiet });
+        const [parts, problems] = check(design, shapes);
+        const what = `${def.type} on the ${surface}`;
+        assert.deepEqual(problems, [], what);
+        for (const part of ["case.base", "case.lid"]) {
+          assert.equal(parts[part].solids, 1, `${what}: ${part}`);
+          assert.ok(parts[part].valid, `${what}: ${part}`);
+        }
+      });
+    }
+  }
 });

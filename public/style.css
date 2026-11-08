@@ -60,6 +60,7 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
   border-bottom: 1px solid var(--border);
 }
 #toolbar .sep { width: 1px; align-self: stretch; background: var(--border); margin: 0 4px; }
+#toolbar .about-button { margin-left: auto; }
 #toolbar .check { display: inline-flex; align-items: center; gap: 3px; padding: 0 4px; cursor: pointer; user-select: none; }
 .toggle-group { display: inline-flex; }
 .toggle-group button { border-radius: 0; }
@@ -254,3 +255,9 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 .sub-dialog tr.selected td { background: var(--accent-soft); }
 .pathrow { display: flex; gap: 4px; }
 .pathrow input { flex: 1; }
+
+.modal .about { max-width: 420px; line-height: 1.5; }
+.modal .about p { margin: 0 0 10px; }
+.modal .about ul { margin: 0; padding-left: 18px; }
+.modal .about a { color: var(--accent); }
+.modal .about .version { color: var(--muted); }

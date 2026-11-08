@@ -460,8 +460,23 @@ base with `placeComponent()`:
 4. **Check it:** `npm test` builds every definition into a case and checks
    that its pillars and openings are still boxmaker's.
 
-So far: the Raspberry Pi Pico (`Pico`), a pixel ring with light pipes
-(`PixelRingLightPipes`) and a small speaker (`SmallSpeaker`).
+Where boxmaker's own code doesn't do what it means to - a hole it makes but
+never cuts, say - a definition can put it right: an opening marked
+`byHand` (saying why) is left out when the tests compare it with boxmaker.
+Each file's notes say what was done by hand, and which sizes are estimates
+to check against the real board.
+
+So far:
+
+| Category | Devices (boxmaker class) |
+| --- | --- |
+| Processors | Raspberry Pi Pico (`PICO`), ESP32 DevKit (`DOITESP32`, by hand: boxmaker's own code for it fails), Wemos (`WEMOS`), Arduino Leonardo (`Leonardo`) |
+| Displays | small OLED (`SmallOled`), small OLED with window (`SmallOledHole`), 14-segment display (`Alpha14Seg`) |
+| Sound | small speaker (`SmallSpeaker`), audio amplifier (`AudioAmplifier`) |
+| Lights | pixel ring with light pipes (`PixelRingLightPipeLid`), 8x8 NeoPixel matrices with light pipes (`NeoPixel8x8LidLightPipe`, `SmallNeoPixel8x8LidLightPipe`) |
+| Buttons and controls | rotary pot (`RotaryPot`), joystick (`Joystick`) |
+| Sensors | BME280 (`BME280`), CCS811 (`CCS811`), PIR motion sensors (`PIRSensor`, `SmallPIRSensor`) |
+| Power | DC to DC converter (`DCtoDC`) |
 
 ## Compatibility
 
