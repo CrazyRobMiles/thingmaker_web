@@ -1,0 +1,47 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Example board case",
+  "cases": [
+    {
+      "id": "case",
+      "style": "Square",
+      "width": 52.5,
+      "depth": 33.0,
+      "height": 15.0,
+      "lid_height": 5.0,
+      "wall_thickness": 2.5,
+      "base_thickness": 2.0,
+      "lid_thickness": 2.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        23.75,
+        23.5,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [],
+  "subassemblies": [
+    {
+      "id": "board",
+      "type": "ExampleBoard",
+      "case": "case",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {
+        "usb": true,
+        "led": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ]
+}

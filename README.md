@@ -28,10 +28,10 @@ editor draws with three.js.
 ## Use
 
 ```
-node server.js designs/cyberdeck.json      # the editor, with a design open (or none, for a new one)
-node server.js output/cyberdeck/print      # just look at some STL files (kept up to date as they change)
-node build.js designs/cyberdeck.json       # build from the command line
-node template.js designs/cyberdeck.json    # device templates (see below)
+node server.js designs/mybox.json          # the editor, with a design open (or none, for a new one)
+node server.js output/mybox/print          # just look at some STL files (kept up to date as they change)
+node build.js designs/mybox.json           # build from the command line
+node template.js designs/mybox.json        # device templates (see below)
 npm test                                   # tests
 npm run parity -- ../thingmaker            # check this against the Python thingmaker
 ```
@@ -376,6 +376,11 @@ Square, MusicBox, Rounded and Bevelled cases have four M3 retaining screws
 holding the lid on, into nuts in sockets on the inside of the base's wall;
 the lid needs to be at least about 5mm tall for them.
 
+The nuts are optional: untick **Nuts on the lid's screws** for a case
+(`"screw_nuts": false`, only written when it's off) and the nuts' blocks
+and sockets are left out, which leaves more room inside - M3 screws grip
+the plain 3.2mm holes in the walls well enough without them.
+
 ### Decorations: engraved text and pictures
 
 Each outside face of a case can carry text and a picture, engraved into it
@@ -532,3 +537,4 @@ here. For designs from the Python version:
 | `lib/py.js` | The Python behaviours the files depend on |
 | `tools/parity.mjs` | Checks this against the Python thingmaker |
 | `tools/build-static.mjs`, `tools/serve-static.mjs` | Build the web version into `site/`, and serve it locally |
+| `test/`, `test/designs/` | The tests, and the designs they use. `designs/` holds the examples everyone sees (the web version copies them into a new folder), so the tests don't depend on what's in it: any of it can go |

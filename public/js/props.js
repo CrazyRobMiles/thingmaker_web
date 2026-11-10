@@ -168,6 +168,12 @@ function caseProps(form, ctx, c) {
   form.heading(`Case ${id}`);
   form.row("Id", form.line(id, (t) => ctx.rename(id, t)));
   form.row("Style", form.combo(meta.caseStyles, c.style, (v) => set("style", v)));
+  if ((meta.screwStyles || []).includes(c.style)) {
+    form.add(form.check("Nuts on the lid's screws", c.screw_nuts !== false, (v) => set("screw_nuts", v), {
+      tip: "The lid's M3 retaining screws go into nuts held in blocks inside the base's walls. Untick it to leave the " +
+        "nuts and their blocks out (they take up room inside the case): the screws go straight into the walls.",
+    }));
+  }
   form.row("Inside width x depth", `${fmtG(c.width)} x ${fmtG(c.depth)} mm`,
     "Worked out from what's placed in it: every case gets the width and depth the largest one needs, or the largest minimum.");
   for (const [name, , label] of meta.caseFields.slice(1)) {

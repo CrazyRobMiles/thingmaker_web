@@ -1,0 +1,49 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Pi 3A+ case",
+  "cases": [
+    {
+      "id": "case",
+      "style": "Square",
+      "width": 66.0,
+      "depth": 57.0,
+      "height": 15.0,
+      "lid_height": 5.0,
+      "wall_thickness": 2.5,
+      "base_thickness": 2.0,
+      "lid_thickness": 2.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "pi",
+      "type": "Pi3APlus",
+      "case": "case",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {
+        "power": true,
+        "hdmi": true,
+        "audio": true,
+        "usb": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ],
+  "subassemblies": []
+}

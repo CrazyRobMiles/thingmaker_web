@@ -8,9 +8,10 @@ import { test } from "node:test";
 import { fileURLToPath } from "node:url";
 import { buildParts, check } from "../lib/builder.js";
 import * as catalogue from "../lib/catalogue.js";
+import * as devices from "../lib/devices.js";
 import { CaseSpec, Design, Placement } from "../lib/design.js";
 import * as kernel from "../lib/kernel.js";
-import { DEFINITIONS, expandOpenings } from "../lib/library.js";
+import { defineDevice, DEFINITIONS, expandOpenings } from "../lib/library.js";
 import { recognise } from "../tools/boxmaker/recognise.mjs";
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -130,5 +131,37 @@ test("every definition builds into a case, on the floor and on the lid, as one v
         }
       });
     }
+  }
+});
+
+test("the small speaker has a rim round it, up to its frame", () => {
+  const def = DEFINITIONS.find((d) => d.type === "SmallSpeaker");
+  kernel.scope(() => {
+    const volume = (cls, options) => new cls("s", options).get_fuser(0, 0, 2).Volume;
+    const rim = (options) => volume(catalogue.CATALOG.SmallSpeaker, options) - volume(defineDevice({ ...def, rims: [] }), options);
+    // A tube 19.5mm inside, 1mm thick, from the outside face (2mm down) up to the pillars' tops - touching the pillars.
+    assert.ok(Math.abs(rim() - Math.PI * (20.5 ** 2 - 19.5 ** 2) * 4) < 2, `${rim()}`);
+    assert.ok(Math.abs(rim({ pillarHeight: 3 }) - Math.PI * (20.5 ** 2 - 19.5 ** 2) * 5) < 2, `${rim({ pillarHeight: 3 })}`);
+  });
+});
+
+test("every device's pillars have open screw holes", () => {
+  // A hole ending exactly at its pillar's top could be sealed over, and the bubble left filled in.
+  const { applyFuserCutter, buildGeometry, PillarSupportedDevice, PillarType } = devices;
+  for (const [type, cls] of Object.entries(catalogue.CATALOG)) {
+    if (!(cls.prototype instanceof PillarSupportedDevice)) continue;
+    kernel.scope(() => {
+      const item = catalogue.make(type, "d");
+      if (item.pillarType === PillarType.SOLID || !item.holeRadius) return;
+      const positions = item._pillarPositions(0, 0);
+      if (!positions.length) return;
+      const [fuser, cutter] = buildGeometry(item, 0, 0, 2);
+      const shape = applyFuserCutter(kernel.makeBox(400, 400, 2, [-150, -150, -2]), fuser, cutter);
+      assert.ok(shape.Solids.every((p) => p.Volume > 0), `${type}: a sealed hole`);
+      for (const [x, y] of positions) {
+        const probe = kernel.makeCylinder(item.holeRadius * 0.8, item.pillarHeight * 0.8, [x, y, item.pillarHeight * 0.1]);
+        assert.ok(shape.common(probe).Volume < 0.01, `${type}: the pillar at ${x}, ${y} has no hole`);
+      }
+    });
   }
 });

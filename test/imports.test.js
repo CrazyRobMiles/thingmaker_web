@@ -53,7 +53,7 @@ test("a broken subassembly isn't left behind, and can't reach outside its folder
 });
 
 test("a design comes in with the pictures it was given, named relative to the folder", () => {
-  const design = JSON.parse(fs.readFileSync(path.join(REPO, "designs", "picturebox.json"), "utf8"));
+  const design = JSON.parse(fs.readFileSync(path.join(REPO, "test", "designs", "picturebox.json"), "utf8"));
   const kase = design.cases[0];
   const face = Object.keys(kase.decorations)[0];
   kase.decorations[face].image.file = "E:\\Someone else's\\camera.png";

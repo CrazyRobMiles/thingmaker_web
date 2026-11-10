@@ -1,0 +1,41 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Untitled",
+  "cases": [
+    {
+      "id": "case1",
+      "style": "MusicBox",
+      "width": 100.0,
+      "depth": 80.0,
+      "height": 30.0,
+      "lid_height": 5.0,
+      "wall_thickness": 0.5,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "position": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rotation": 0.0,
+      "decorations": {
+        "bottom": {
+          "image": {
+            "file": "images/camera_outline.png",
+            "zoom": 2.0,
+            "angle": 60.0
+          }
+        },
+        "top": {
+          "image": {}
+        }
+      }
+    }
+  ],
+  "hinges": [],
+  "devices": [],
+  "subassemblies": []
+}

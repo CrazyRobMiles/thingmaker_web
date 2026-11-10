@@ -53,7 +53,8 @@ const SECTIONS = (web) => [
   ["The panel on the right", [
     list(
       "The design tree: everything in the design. Untick an item to hide it in the view.",
-      "The settings of whatever's selected. A case can fit its height to what's in it.",
+      "The settings of whatever's selected. A case can fit its height to what's in it, and can leave out the nuts " +
+        "on its lid's screws (the screws go straight into the walls, and the nuts' blocks don't take up room inside).",
       "Problems: things that collide, or don't fit. Click one to select what it's about."),
   ]],
   ["Building and printing", [

@@ -8,21 +8,27 @@ import * as dm from "../lib/design.js";
 import * as geom from "../lib/geom.js";
 import { CaseSpec, Design, DesignError, HingeSpec, Placement } from "../lib/design.js";
 import * as kernel from "../lib/kernel.js";
+import { buildParts, check } from "../lib/builder.js";
+import { applyEdit } from "../lib/edits.js";
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const DESIGNS = path.join(ROOT, "designs");
+// The example designs everyone sees (designs/, published with the web
+// version), and the ones the tests use (test/designs/, which isn't).
+const DESIGN_FOLDERS = [path.join(ROOT, "designs"), path.join(ROOT, "test", "designs")];
 
 function boxCase(id = "case", extra = {}) {
   return new CaseSpec(id, { style: "Square", height: 30.0, ...extra });
 }
 
-test("every example design loads, and saving it again changes nothing", () => {
-  for (const name of fs.readdirSync(DESIGNS).filter((n) => n.endsWith(".json"))) {
-    kernel.scope(() => {
-      const first = Design.load(path.join(DESIGNS, name)).dumps();
-      const again = Design.from_dict(JSON.parse(first)).dumps();
-      assert.equal(again, first, name);
-    });
+test("every example and test design loads, and saving it again changes nothing", () => {
+  for (const folder of DESIGN_FOLDERS) {
+    for (const name of fs.readdirSync(folder).filter((n) => n.endsWith(".json"))) {
+      kernel.scope(() => {
+        const first = Design.load(path.join(folder, name)).dumps();
+        const again = Design.from_dict(JSON.parse(first)).dumps();
+        assert.equal(again, first, name);
+      });
+    }
   }
 });
 
@@ -205,4 +211,36 @@ test("a case can fit its height to what's on its walls, floor and lid", () => {
   assert.ok(!("fit_height" in sized(false).to_dict().cases[0]));
   assert.equal(Design.from_dict(JSON.parse(stack.dumps())).cases[0].fit_height, true);
   assert.throws(() => boxCase("case", { fit_height: "yes" }), /fit_height must be true or false/);
+});
+
+test("a case's retaining screws can go without nuts", () => {
+  const quiet = () => {};
+  const made = (screw_nuts, ...placements) => {
+    const design = new Design({ cases: [boxCase("case", { screw_nuts })] });
+    design.placements.push(...placements);
+    design.relayout();
+    return design;
+  };
+  // No nut blocks: less in the base, but still one piece, with the screws' holes through its walls and the lid's skirt.
+  const [withNuts, without] = [true, false].map((nuts) => kernel.scope(() => {
+    const design = made(nuts);
+    const [parts, problems] = check(design, buildParts(design, { log: quiet })[0]);
+    assert.deepEqual(problems, []);
+    assert.equal(parts["case.base"].solids, 1);
+    return [parts["case.base"].volume_mm3, parts["case.lid"].volume_mm3];
+  }));
+  assert.ok(without[0] < withNuts[0] - 100, `${without[0]} and ${withNuts[0]}`);
+  assert.ok(Math.abs(without[1] - withNuts[1]) < 0.01);
+  // Nothing stands in from the walls, so a speaker on a wall needs less height.
+  assert.deepEqual(made(false).wall_obstacles(made(false).cases[0]), []);
+  const speaker = () => new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" });
+  assert.ok(made(false, speaker()).cases[0].height < made(true, speaker()).cases[0].height);
+  // Written only when they're left out; set like any other case field.
+  assert.ok(!("screw_nuts" in made(true).to_dict().cases[0]));
+  assert.equal(made(false).to_dict().cases[0].screw_nuts, false);
+  assert.equal(Design.from_dict(JSON.parse(made(false).dumps())).cases[0].screw_nuts, false);
+  const edited = applyEdit(made(true).to_dict(), { op: "set", kind: "case", id: "case", field: "screw_nuts", value: false });
+  assert.ok(edited.ok, edited.message);
+  assert.equal(edited.design.cases[0].screw_nuts, false);
+  assert.throws(() => boxCase("case", { screw_nuts: "no" }), /screw_nuts must be true or false/);
 });

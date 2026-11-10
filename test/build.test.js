@@ -42,7 +42,7 @@ test("an STL file loads as a solid and writes back out", () => {
 });
 
 test("a hinged pair of cases builds into four single solids that open without touching", () => {
-  const design = Design.load(path.join(ROOT, "designs", "hinge_test.json"));
+  const design = Design.load(path.join(ROOT, "test", "designs", "hinge_test.json"));
   kernel.scope(() => {
     const [shapes] = buildParts(design, { log: quiet });
     assert.deepEqual(Object.keys(shapes).sort(), ["bottom.base", "bottom.lid", "top.base", "top.lid"]);
@@ -58,7 +58,7 @@ test("a hinged pair of cases builds into four single solids that open without to
 
 test("a build writes print and assembled STLs, the design and a manifest", () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "thingmaker-"));
-  const design = Design.load(path.join(ROOT, "designs", "example_board_case.json"));
+  const design = Design.load(path.join(ROOT, "test", "designs", "example_board_case.json"));
   const manifest = build(design, dir, quiet);
   assert.deepEqual(manifest.problems, []);
   for (const pid of ["case.base", "case.lid"]) {
@@ -73,7 +73,7 @@ test("a build writes print and assembled STLs, the design and a manifest", () =>
 });
 
 test("a device's template is one thin plate", () => {
-  const design = Design.load(path.join(ROOT, "designs", "pi3aplus_case.json"));
+  const design = Design.load(path.join(ROOT, "test", "designs", "pi3aplus_case.json"));
   kernel.scope(() => {
     const plate = placementTemplate(design, design.placements[0]);
     const b = plate.bounds();
