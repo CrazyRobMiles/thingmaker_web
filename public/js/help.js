@@ -32,7 +32,9 @@ const SECTIONS = (web) => [
       "Right-click a surface to add a device or subassembly where you clicked. A device goes on its own side of " +
         "the surface, whichever face you clicked: inside the case (a battery compartment goes outside). " +
         "A subassembly goes on the face you clicked.",
-      "Devices are grouped by what they are: processors, displays, sound, lights, buttons and controls, sensors, power.",
+      "Devices are grouped by what they are: processors, displays, sound, lights, buttons and controls, sensors, power, ventilation.",
+      "A vent (under Ventilation) cuts lines or holes through the surface it's on, with fans behind it if you want them: " +
+        "its settings choose the pattern, its size, and how many fans and which size.",
       "Right-click a device to rotate it, stick it to the sides of its surface, save its template or delete it."),
   ]],
   ["Moving around", [

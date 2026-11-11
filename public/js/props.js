@@ -310,7 +310,8 @@ function placementProps(form, ctx, id) {
       else {
         // The recess depth goes down into the case: negative.
         const [lo, hi] = { recess_depth: [-1000, 0], recess_hole_across: [-1000, 1000], recess_hole_up: [-1000, 1000], angle: [-360, 360] }[name] || [0, 1000];
-        widget = form.spin(current, setParam, { lo, hi, step: 0.5 });
+        // (A count goes up in ones.)
+        widget = form.spin(current, setParam, { lo, hi: name === "fans" ? 20 : hi, step: name === "fans" ? 1 : 0.5 });
       }
       form.row(labels[name] || paramLabel(name), widget, label);
       if (!name.startsWith("margin_")) form.note(label);

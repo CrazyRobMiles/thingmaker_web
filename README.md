@@ -298,6 +298,14 @@ The design is laid out again after every change.
   case needs for its devices' footprints, or the largest
   `min_width`/`min_depth`. A case with its own position keeps its centre
   where it was as it grows or shrinks; a hinged case follows its hinge.
+- **Shaped corners:** in a case whose inside corners are rounded or
+  bevelled (MusicBox, RoundBottom's back corners, and Rounded or Bevelled
+  ones whose edge is bigger than the wall), what's in it keeps far enough
+  from the walls, on top of its margins, that its corners clear them. On
+  the floor or the lid that's the same at both walls (1.5mm in a MusicBox),
+  but only for the parts of a device near enough to its edges to reach a
+  corner. Up a wall, it's how far along the wall a corner reaches at the
+  height each part of the device stands out from it.
 - **Case heights** are worked out for each case on its own. One set to
   **Fit height to what's in it** (`"fit_height": true`) is exactly as high
   as what's in it needs; any other keeps the height it's set to, but grows
@@ -357,6 +365,27 @@ blocks so it can be lowered in past them.
 countersunk screw at the other; its back is part of the case (`back:
 recess`) or a separate plate (`back: plate`, `<id>.back`) screwed into
 pillars. A decoration on the face carries on across the cover.
+
+### Vents
+
+A **Vent** (under Ventilation) cuts a pattern through the surface it's on:
+`pattern` is `horizontal lines` or `vertical lines` (`ends`: `rounded` or
+`straight`; `line_width` wide), a `grid of holes`, or an `ellipse of holes`
+- rings of holes filling an ellipse, made as the speaker's grille is
+(`hole_diameter`). `gap` is the space between neighbouring lines or holes,
+and `width` x `height` the area the pattern fills.
+
+`fans` puts that many fans side by side behind it (`fan_size`: `large`,
+40mm with screw holes 32mm apart, or `small`, 25mm with screw holes 20mm
+apart). Then the fans set the vent's size: each gets its four screw holes,
+and the pattern is cut in the round opening in front of its blades, clear
+of the screws. Mounted inside (the default), the fans are in the case, and
+count for collisions and for fitting the case's height.
+
+On a wall, a vent - and anything else that cuts through the wall (a hole, a
+speaker's grille) - stays below the step at the top of the wall that the
+lid's skirt fits over (the lid height and 0.15mm), its top margin below it;
+the case grows if it needs to.
 
 ### Hinges
 

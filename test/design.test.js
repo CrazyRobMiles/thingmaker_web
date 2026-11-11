@@ -197,12 +197,12 @@ test("a case can fit its height to what's on its walls, floor and lid", () => {
   assert.deepEqual([lid.placements[1].x, lid.placements[1].y], [0.0, 0.0]);
   assert.ok(!lid.warnings().some((w) => /collides/.test(w)));
   // A speaker on a wall sits above a battery compartment filling the floor (26mm), rather than the case growing
-  // round it centred.
+  // round it centred - and its grille stays below the step at the top of the wall for the lid's skirt (5.15mm).
   const box = new Design({ cases: [boxCase("case", { height: 20.0, fit_height: true })] });
   box.placements.push(new Placement("speaker", "SmallSpeaker", "case", { surface: "right", mount: "inside" }),
     new Placement("battery", "BatteryCompartment", "case", { surface: "bottom", mount: "outside", params: { back: "plate" } }));
   box.relayout();
-  assert.equal(box.cases[0].height, 63.5);
+  assert.equal(box.cases[0].height, 68.7);
   assert.deepEqual(box.warnings().filter((w) => !/nut blocks/.test(w)), []);
   // Nothing in it: the height it had.
   assert.equal(sized(true).cases[0].height, 20.0);

@@ -1,23 +1,26 @@
 {
   "format": "thingmaker-design",
   "version": 2,
-  "name": "Pi 3A+ case",
+  "name": "PICO_box",
   "cases": [
     {
-      "id": "case",
-      "style": "Square",
-      "width": 66.0,
-      "depth": 57.0,
-      "height": 15.0,
+      "id": "case1",
+      "style": "MusicBox",
+      "width": 22.0,
+      "depth": 53.0,
+      "height": 8.8,
       "lid_height": 5.0,
-      "wall_thickness": 2.5,
-      "base_thickness": 2.0,
-      "lid_thickness": 2.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
       "min_width": 0.0,
       "min_depth": 0.0,
+      "fit_height": true,
+      "screw_nuts": false,
       "position": [
-        0.0,
-        0.0,
+        39.0,
+        13.5,
         0.0
       ],
       "rotation": 0.0
@@ -26,9 +29,9 @@
   "hinges": [],
   "devices": [
     {
-      "id": "pi",
-      "type": "Pi3APlus",
-      "case": "case",
+      "id": "pico1",
+      "type": "Pico",
+      "case": "case1",
       "surface": "bottom",
       "mount": "inside",
       "x": 0.0,
@@ -36,9 +39,6 @@
       "rotation": 0,
       "params": {},
       "connector_cuts": {
-        "power": true,
-        "hdmi": true,
-        "audio": true,
         "usb": true
       },
       "connector_cut_targets": null,
