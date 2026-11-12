@@ -271,7 +271,7 @@ A design is a JSON file that lists:
   from what's placed in it (see Layout); its height, wall thicknesses and
   optional `min_width`/`min_depth` are set by hand. The `style` sets its
   shape: `MusicBox` (rounded upright corners, the default), `Square`,
-  `RoundBottom` (the two back corners rounded), `Rounded` (every outside
+  `Rounded` (every outside
   edge rounded, radius `edge`) or `Bevelled` (every outside edge bevelled
   at 45 degrees, `edge` in from each face). On Rounded and Bevelled cases
   the joint between base and lid stays square, and the problems list warns
@@ -299,7 +299,7 @@ The design is laid out again after every change.
   `min_width`/`min_depth`. A case with its own position keeps its centre
   where it was as it grows or shrinks; a hinged case follows its hinge.
 - **Shaped corners:** in a case whose inside corners are rounded or
-  bevelled (MusicBox, RoundBottom's back corners, and Rounded or Bevelled
+  bevelled (MusicBox, and Rounded or Bevelled
   ones whose edge is bigger than the wall), what's in it keeps far enough
   from the walls, on top of its margins, that its corners clear them. On
   the floor or the lid that's the same at both walls (1.5mm in a MusicBox),

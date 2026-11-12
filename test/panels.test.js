@@ -9,7 +9,7 @@ import { applyEdit } from "../lib/edits.js";
 import * as kernel from "../lib/kernel.js";
 
 const quiet = () => {};
-const STYLES = [["Square", {}], ["MusicBox", {}], ["RoundBottom", {}], ["Rounded", { edge: 6 }], ["Bevelled", { edge: 4 }]];
+const STYLES = [["Square", {}], ["MusicBox", {}], ["Rounded", { edge: 6 }], ["Bevelled", { edge: 4 }]];
 const PANELS = ["floor", "front", "back", "left", "right"];
 
 function panelCase(style = "Square", extra = {}) {
@@ -42,8 +42,7 @@ test("a panel case builds into five panels and a lid that fit together without o
         assert.deepEqual(problems, [], style);
         assert.deepEqual(Object.keys(parts).sort(), kase.parts.slice().sort());
         for (const p of kase.parts) assert.ok(parts[p].solids === 1 && parts[p].valid, `${style}: ${p}`);
-        // (A RoundBottom's lid has always overlapped its base a little.)
-        const ids = style === "RoundBottom" ? kase.base_parts : kase.parts;
+        const ids = kase.parts;
         const all = ids.map((p) => shapes[p].transformed(partInCaseMatrix(kase, p)));
         for (let i = 0; i < all.length; i++) {
           for (let j = 0; j < i; j++) assert.ok(all[i].common(all[j]).Volume < 0.01, `${style}: ${ids[i]} and ${ids[j]} overlap`);
@@ -129,8 +128,8 @@ test("what's in a panel case keeps clear of its bolts' blocks", () => {
 
 test("a panel case's hinge stays on one panel, and switching to panels keeps connector cuts on the base", () => {
   const hinged = (edge, margin) => {
-    const design = new Design({ cases: [new CaseSpec("a", { style: "RoundBottom", height: 40.0, panels: true, min_width: 80, min_depth: 70 }),
-      new CaseSpec("b", { style: "RoundBottom", height: 40.0, panels: true })], hinges: [new HingeSpec("h", ["a", "b"], { edge, margin })] });
+    const design = new Design({ cases: [new CaseSpec("a", { style: "MusicBox", height: 40.0, panels: true, min_width: 80, min_depth: 70 }),
+      new CaseSpec("b", { style: "MusicBox", height: 40.0, panels: true })], hinges: [new HingeSpec("h", ["a", "b"], { edge, margin })] });
     design.relayout();
     return design.problems().map((p) => p[0]).filter((m) => m.startsWith("Hinge h"));
   };

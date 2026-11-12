@@ -23,7 +23,6 @@ function inside(x, y, w, d, corner) {
 
 const STYLES = [
   ["MusicBox", {}, () => ["round", 5]],
-  ["RoundBottom", {}, (x, y) => (y === "high" ? ["round", 10] : null)],
   ["Rounded", { edge: 8, wall_thickness: 3 }, () => ["round", 5]],
   ["Bevelled", { edge: 8, wall_thickness: 3 }, () => ["bevel", 8 - (2 - Math.SQRT2) * 3]],
 ];
