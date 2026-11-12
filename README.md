@@ -410,6 +410,46 @@ The nuts are optional: untick **Nuts on the lid's screws** for a case
 and sockets are left out, which leaves more room inside - M3 screws grip
 the plain 3.2mm holes in the walls well enough without them.
 
+### Panel cases
+
+Tick **Bolted-together panels** (`"panels": true`) and a case's base is
+made of five parts instead of one: `<case>.floor`, `<case>.front`,
+`<case>.back`, `<case>.left` and `<case>.right`. Each is printed lying
+flat on its outside face, so devices can be fitted to the floor and each
+wall before the case is put together with M3 bolts. The lid stays one
+piece, with its retaining screws as before; a case without the setting is
+built exactly as it always was.
+
+- **Joints:** plain butt joints. The walls stand on the floor, and the
+  front and back walls fit between the left and right ones, which run the
+  whole depth. A panel case's inside corners are square, for the panels
+  to meet in; its outside keeps its style's shape, the rounding or bevel
+  of each corner going with the panels it's in. A fillet (3mm each way, a
+  45 degree slope that prints without support) runs along the inside of
+  the bottom of each wall, resting on the floor, and up each end of the
+  left and right walls, resting against the front or back wall. They
+  locate the panels and give glue somewhere to go.
+- **Bolts:** bolts go up through the floor into blocks at the bottom of
+  each wall, and through the front and back walls into blocks at the ends
+  of the left and right ones. `panel_bolt_spacing` (40mm by default, at
+  least 10) is the most they can be apart along a joint. They screw
+  straight into 2.8mm holes in the blocks, or, with **Nuts on the panels'
+  bolts** (`"panel_nuts": true`), into M3 nuts in sockets at the far ends
+  of the blocks. The blocks are 7mm deep, 9mm across and 8mm long, so
+  M3x10 or M3x12 bolts suit.
+- **Layout:** everything in the case keeps clear of the blocks and the
+  fillets, as of the retaining screws' nut blocks: what's on the floor
+  keeps away from the fillets and blocks next to it, what's up a wall sits
+  above the fillets and floor blocks along it and keeps along the wall
+  from the corner blocks.
+  A panel case is at least big enough for its bolts, and tall enough for
+  at least one corner bolt below the lid's screws.
+- **Hinges** go on the wall panel along their edge. On the front or back
+  edge, the hinge's margin has to keep it clear of the left and right
+  panels (at least the wall thickness); the problems list says if not.
+
+The settings are only written to a design when `panels` is on.
+
 ### Decorations: engraved text and pictures
 
 Each outside face of a case can carry text and a picture, engraved into it

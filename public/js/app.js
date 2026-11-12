@@ -220,7 +220,8 @@ function shown(key) {
 inlays going with the part they're in. */
 function owner(partId) {
   const parent = partId.split(".deco.")[0];
-  const c = state.design.cases.find((x) => [`${x.id}.base`, `${x.id}.lid`].includes(parent));
+  const c = state.design.cases.find((x) => ["base", "lid", "floor", "front", "back", "left", "right"]
+    .some((p) => parent === `${x.id}.${p}`));
   if (c) return ["case", c.id];
   const p = allPlacements().find((x) => parent.startsWith(x.id + "."));
   return p ? ["placement", p.id] : null;

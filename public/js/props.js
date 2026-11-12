@@ -174,6 +174,19 @@ function caseProps(form, ctx, c) {
         "nuts and their blocks out (they take up room inside the case): the screws go straight into the walls.",
     }));
   }
+  form.add(form.check("Bolted-together panels", !!c.panels, (v) => set("panels", v), {
+    tip: "Make the base from a floor and four walls, printed flat and bolted together with M3 bolts, butt jointed " +
+      "with fillets along the inside of the joints - so devices can be fitted to each panel before it goes together. The bolts go into blocks inside " +
+      "the walls, which what's in the case is kept clear of. The lid stays one piece.",
+  }));
+  if (c.panels) {
+    form.row("Bolts at most", form.spin(c.panel_bolt_spacing ?? 40, (v) => set("panel_bolt_spacing", v), { lo: 10, hi: 500 }),
+      "How far apart the bolts along each joint can be (mm)");
+    form.add(form.check("Nuts on the panels' bolts", !!c.panel_nuts, (v) => set("panel_nuts", v), {
+      tip: "The bolts go into M3 nuts in sockets at the ends of their blocks. Untick it to screw them straight into " +
+        "2.8mm holes in the blocks.",
+    }));
+  }
   form.row("Inside width x depth", `${fmtG(c.width)} x ${fmtG(c.depth)} mm`,
     "Worked out from what's placed in it: every case gets the width and depth the largest one needs, or the largest minimum.");
   for (const [name, , label] of meta.caseFields.slice(1)) {
@@ -201,7 +214,7 @@ function caseProps(form, ctx, c) {
     });
     form.row("Rotation", form.spin(c.rotation, (v) => set("rotation", v, false), { lo: -360, hi: 360, step: 90, unit: "deg" }));
   }
-  form.note(`Parts: ${id}.base, ${id}.lid`);
+  form.note(`Parts: ${(c.panels ? ["floor", "front", "back", "left", "right"] : ["base"]).map((p) => `${id}.${p}`).join(", ")}, ${id}.lid`);
   form.buttons(button("Add device to this case...", () => ctx.addPlacementDialog("device")),
     button("Add subassembly to this case...", () => ctx.addPlacementDialog("subassembly"), { disabled: !meta.subassemblies.length }));
 }

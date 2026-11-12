@@ -1,0 +1,34 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "paneltest",
+  "cases": [
+    {
+      "id": "case1",
+      "style": "MusicBox",
+      "width": 25.0,
+      "depth": 27.0,
+      "height": 30.0,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "screw_nuts": false,
+      "panels": true,
+      "panel_bolt_spacing": 40.0,
+      "panel_nuts": false,
+      "position": [
+        37.5,
+        26.5,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [],
+  "subassemblies": []
+}

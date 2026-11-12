@@ -1,0 +1,153 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Record Player",
+  "cases": [
+    {
+      "id": "case1",
+      "style": "Bevelled",
+      "width": 160.6,
+      "depth": 94.6,
+      "height": 87.7,
+      "lid_height": 5.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 3.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "fit_height": true,
+      "screw_nuts": false,
+      "panels": true,
+      "panel_bolt_spacing": 40.0,
+      "panel_nuts": false,
+      "position": [
+        -30.3,
+        -7.3,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "batterycompartment1",
+      "type": "BatteryCompartment",
+      "case": "case1",
+      "surface": "bottom",
+      "mount": "outside",
+      "x": 7.5,
+      "y": 7.5,
+      "rotation": 90,
+      "params": {
+        "inner_width": 63.0,
+        "inner_length": 120.0,
+        "inner_depth": 22.0,
+        "back": "plate"
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "smallspeaker1",
+      "type": "SmallSpeaker",
+      "case": "case1",
+      "surface": "front",
+      "mount": "inside",
+      "x": 110.6,
+      "y": 31.025,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "left"
+      ]
+    },
+    {
+      "id": "smallspeaker2",
+      "type": "SmallSpeaker",
+      "case": "case1",
+      "surface": "front",
+      "mount": "inside",
+      "x": 7.0,
+      "y": 31.025,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "right"
+      ]
+    },
+    {
+      "id": "rfidsensor1",
+      "type": "RFIDSensor",
+      "case": "case1",
+      "surface": "top",
+      "mount": "inside",
+      "x": 49.05,
+      "y": 28.15,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pixelringlightpipes1",
+      "type": "PixelRingLightPipes",
+      "case": "case1",
+      "surface": "front",
+      "mount": "inside",
+      "x": 53.3,
+      "y": 28.525,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pico1",
+      "type": "Pico",
+      "case": "case1",
+      "surface": "top",
+      "mount": "inside",
+      "x": 122.05,
+      "y": 39.1,
+      "rotation": 0,
+      "params": {
+        "margin_front": 3.0
+      },
+      "connector_cuts": {
+        "usb": false
+      },
+      "connector_cut_targets": null,
+      "stick": [
+        "front"
+      ]
+    },
+    {
+      "id": "dfplayer1",
+      "type": "DFPlayer",
+      "case": "case1",
+      "surface": "top",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 25.45,
+      "rotation": 0,
+      "params": {
+        "margin_left": 3.5
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "left"
+      ]
+    }
+  ],
+  "subassemblies": []
+}
