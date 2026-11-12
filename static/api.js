@@ -218,6 +218,12 @@ export async function importSubassemblies() {
   return importer.importSubassemblies(call);
 }
 
+/** The name of the folder thingmaker is working in (the browser doesn't
+tell a page where on the computer it is). */
+export function folderName() {
+  return folder ? folder.name : "";
+}
+
 /** Choose another folder (or confirm this one), and start again on it. */
 export async function changeFolder() {
   const chosen = await connect({ change: true });

@@ -38,7 +38,7 @@ const state = {
   printView: false,
   stlSource: null, // file/folder shown in the Print parts view; null = this design's live parts
   printMeshes: new Map(), // name -> {geometry, mtime}
-  options: { layout: false, lids: true, built: true },
+  options: { lids: true, built: true },
   build: null,
   propWidgets: {},
 };
@@ -1047,7 +1047,10 @@ const ACTIONS = {
 // putting fonts in it).
 if (api.changeFolder) {
   ACTIONS["change-folder"] = async () => {
-    if (await confirmDiscard()) api.changeFolder();
+    if (await confirmDiscard()) {
+      await api.changeFolder();
+      showFolderName();
+    }
   };
   ACTIONS.fonts = async () => {
     if (!(await api.manageFonts())) return;
@@ -1128,9 +1131,20 @@ $("#log-close").addEventListener("click", () => {
 
 // -- start --
 
+/** The web version: name the folder it's working in on File > Change folder. */
+function showFolderName() {
+  const b = document.querySelector('[data-action="change-folder"]');
+  const name = api.folderName ? api.folderName() : "";
+  b.textContent = name ? `Change folder (now "${name}")...` : "Change folder...";
+  b.title = name ? `thingmaker is working in the folder "${name}"` : "";
+}
+
 async function start() {
   // (The web version first needs its folder.)
-  if (api.ready) await api.ready();
+  if (api.ready) {
+    await api.ready();
+    showFolderName();
+  }
   const unsaved = await recovery.unsaved();
   state.meta = await api.get("/api/meta");
   const startup = await api.get("/api/startup");

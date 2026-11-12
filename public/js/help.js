@@ -21,8 +21,8 @@ const SECTIONS = (web) => [
       "Add case, Add hinge (joins two cases), Add device, Add subassembly (a part made from STL files), Delete.",
       "Build (F5) writes the STL files - while it runs it becomes Stop build.",
       "Design shows the design; Print parts shows the printable parts side by side.",
-      "Layout shows the cases as simple panels; Lids shows or hides the lids (hide them to reach inside a case); " +
-        "Built model shows the real parts, rebuilt as you edit.",
+      "Lids shows or hides the lids (hide them to reach inside a case); Built model shows the real parts, rebuilt " +
+        "as you edit (turn it off to see the cases as simple panels).",
       "Fit view (F) fits the whole design in the view."),
   ]],
   ["Adding things", [

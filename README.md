@@ -66,7 +66,7 @@ Where things are kept:
 The toolbar has the File menu (New, Open, Save, Save As, Open STL files, New
 and Edit subassembly), Undo and Redo, Add case / hinge / device /
 subassembly, Delete, **Build (F5)**, the **Design** and **Print parts**
-views, the view options **Layout**, **Lids** and **Built model**, and the
+views, the view options **Lids** and **Built model**, and the
 Help menu: **Editor help (F1)**, a pop-up guide to all this
 (`public/js/help.js` - keep it in step with this section), and **About**.
 

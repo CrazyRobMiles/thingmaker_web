@@ -242,7 +242,7 @@ export class View {
     for (const c of view.cases) {
       if (!shown(["case", c.id])) continue;
       const cm = matrix4(c.matrix);
-      if (options.layout || !showBuilt) this._caseSlabs(c, cm, options.lids);
+      if (!showBuilt) this._caseSlabs(c, cm, options.lids);
       this._label(root, c.id, c.label, "case");
     }
 

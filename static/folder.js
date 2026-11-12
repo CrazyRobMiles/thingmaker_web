@@ -114,6 +114,10 @@ export async function connect({ change = false } = {}) {
       if (change) buttons.unshift(["Cancel", null]);
       return {
         body: el("div", { class: "form" },
+          change && saved
+            ? el("div", { class: "wide" }, "Working in the folder ", el("b", {}, `"${saved.name}"`), " now. (The browser " +
+              "only tells thingmaker the folder's name, not where it is on this computer.)")
+            : null,
           el("div", { class: "wide note" }, "thingmaker keeps your designs, subassemblies, pictures, fonts and the STL files it " +
             "builds in a folder on this computer, laid out as the Python thingmaker's is: designs/, subassemblies/, images/, " +
             "fonts/ and output/. Choose that folder - your thingmaker repository, say - or an empty one, which is set up with " +
