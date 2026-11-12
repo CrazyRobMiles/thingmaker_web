@@ -352,9 +352,11 @@ surface it's on.
 Any device or subassembly can be sunk into its surface (`recess_depth`, as a
 negative number), either as a **cut** pocket with its own floor or as a
 **plate**: an open well with a separate baseplate (`<id>.baseplate`) screwed
-up into pillars round it. `recess_width`/`recess_height` set the opening's
-size, `recess_radius` its corners, and `recess_hole` a cable hole through
-the floor or baseplate. A recess going into the lid, or a baseplate fitted
+up into pillars round it. The opening fits the device and its margins;
+`recess_width`/`recess_height` add space round it, across and up the
+surface, half on each side (the editor shows them as **Recess margin**:
+1 adds 0.5mm each side). `recess_radius` sets its corners, and
+`recess_hole` a cable hole through the floor or baseplate. A recess going into the lid, or a baseplate fitted
 from inside, is kept clear of the hinge rail and the retaining screws' nut
 blocks so it can be lowered in past them.
 

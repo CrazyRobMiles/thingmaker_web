@@ -244,3 +244,17 @@ test("a case's retaining screws can go without nuts", () => {
   assert.equal(edited.design.cases[0].screw_nuts, false);
   assert.throws(() => boxCase("case", { screw_nuts: "no" }), /screw_nuts must be true or false/);
 });
+
+test("a recess's width and height are extra space round the device, half on each side", () => {
+  const size = (params) => {
+    const it = new Placement("p", "Pico", "case1", { params: { recess_depth: -5, ...params } }).make();
+    return [it.width, it.depth];
+  };
+  const [w, d] = size({});
+  assert.deepEqual(size({ recess_width: 1, recess_height: 4 }), [w + 1, d + 4]);
+  assert.deepEqual(size({ recess_width: 90 }), [w + 90, d]);
+  assert.deepEqual(size({ recess_width: -3 }), [w, d]);
+  // Turned a quarter, the width still runs across the surface.
+  const turned = new Placement("p", "Pico", "case1", { rotation: 90, params: { recess_depth: -5, recess_width: 10 } }).make();
+  assert.deepEqual([turned.width, turned.depth], [w, d + 10]);
+});

@@ -1,6 +1,6 @@
 {
   "name": "thingmaker-web",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Design 3D-printable enclosures for electronics in a web browser - a Node.js port of thingmaker",
   "type": "module",
   "main": "server.js",

@@ -298,7 +298,7 @@ function placementProps(form, ctx, id) {
   const labels = {};
   for (const side of Object.keys(sides)) labels[`margin_${side}`] = `${side[0].toUpperCase()}${side.slice(1)} margin`;
   Object.assign(labels, {
-    recess_width: `Recess width (${between.u})`, recess_height: `Recess height (${between.v})`, recess_hole: "Cable hole diameter",
+    recess_width: `Recess margin (${between.u})`, recess_height: `Recess margin (${between.v})`, recess_hole: "Cable hole diameter",
     recess_hole_across: `Cable hole offset (${between.u})`, recess_hole_up: `Cable hole offset (${between.v})`,
   });
   const sections = [
