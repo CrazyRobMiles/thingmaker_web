@@ -57,6 +57,7 @@ const SECTIONS = (web) => [
       "The design tree: everything in the design. Untick an item to hide it in the view.",
       "The settings of whatever's selected. A case can fit its height to what's in it, and can leave out the nuts " +
         "on its lid's screws (the screws go straight into the walls, and the nuts' blocks don't take up room inside). " +
+        "Snap fit holds the lid on with ridges that snap into grooves round the base, instead of screws. " +
         "Bolted-together panels makes its base from a floor and four walls, each printed flat, so devices can be fitted " +
         "to them before the case is put together with M3 bolts.",
       "Problems: things that collide, or don't fit. Click one to select what it's about."),

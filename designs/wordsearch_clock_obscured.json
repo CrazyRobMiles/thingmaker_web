@@ -1,0 +1,64 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Wordsearch clock, letters behind the face",
+  "cases": [
+    {
+      "id": "clock",
+      "style": "Square",
+      "width": 176.0,
+      "depth": 176.0,
+      "height": 17.3,
+      "lid_height": 10.0,
+      "wall_thickness": 3.0,
+      "base_thickness": 3.0,
+      "lid_thickness": 2.0,
+      "edge": 3.0,
+      "min_width": 0.0,
+      "min_depth": 0.0,
+      "fit_height": true,
+      "screw_nuts": false,
+      "snap_fit": true,
+      "position": [
+        -38.0,
+        -48.0,
+        0.0
+      ],
+      "rotation": 0.0
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "face",
+      "type": "WordsearchObscured",
+      "case": "clock",
+      "surface": "top",
+      "mount": "inside",
+      "x": 0.0,
+      "y": 0.0,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": []
+    },
+    {
+      "id": "pico",
+      "type": "Pico",
+      "case": "clock",
+      "surface": "bottom",
+      "mount": "inside",
+      "x": 77.0,
+      "y": 61.5,
+      "rotation": 0,
+      "params": {},
+      "connector_cuts": {
+        "usb": true
+      },
+      "connector_cut_targets": null,
+      "stick": []
+    }
+  ],
+  "subassemblies": []
+}

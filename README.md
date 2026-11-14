@@ -389,6 +389,45 @@ speaker's grille) - stays below the step at the top of the wall that the
 lid's skirt fits over (the lid height and 0.15mm), its top margin below it;
 the case grows if it needs to.
 
+### LED panels: wordsearch faces and light pipes
+
+Four devices (under Lights) go on the inside of a surface - the lid, say -
+with a flexible LED panel lying face down behind it: a 16 x 16 grid of
+LEDs 10mm apart, as the wordsearch clock uses. A flexible panel has no
+holes to fix it by, so it's held by pressing it, as the clock's back does:
+it lies on what stands between it and the surface, and a frame
+(`<id>.frame`, 2mm thick) over its edges (`frame_overlap`, 5mm) screws
+down onto pillars round it with M3 self-tapping screws. The pillars stop
+0.2mm short of the back of the panel (`panel_thickness`, 0.7mm), so
+tightening the screws squeezes it. The pillars take 7.5mm round the panel,
+so the case is that much bigger each side than the panel.
+
+- **Wordsearch face, letters right through** (`WordsearchThrough`) and
+  **letters behind the surface** (`WordsearchObscured`): the clock's two
+  fronts. `letters` holds the wordsearch a row at a time from the top, the
+  rows separated by `/` - the clock's own by default - one letter over each
+  LED, `letter_height` (6.5mm) tall in `font` (`arialbd`, Arial Bold, or its
+  free stand-in), read the right way round from outside. The letters are a
+  part of their own (`<id>.inlay`) to print in another colour with the
+  surface: let in from the inside behind a `skin` (0.4mm) of the surface,
+  or right through it, joined by a `sheet` (0.5mm) behind them. Right
+  through, the middles of letters like A and O fall out of the surface, so
+  they're a part too (`<id>.counters`), to print in the surface's colour.
+  Between the surface and the panel, a separator (`<id>.separator`, best
+  printed black) keeps each LED's light to its own letter:
+  `separator_wall` (1.5mm) walls round each square, `separator_height`
+  (3mm) high. A 2mm lid matches the clock's face.
+- **16x16 LED panel, round light pipes** and **square light pipes**
+  (`LEDArray16x16Round`, `LEDArray16x16Square`): a dot over each LED - round
+  (`dot_size` 6mm across) or square (8mm) - behind a `skin` (0.8mm) of the
+  surface to soften the light, or right through it with a skin of 0, and a
+  light pipe round it from the surface to the panel (`pipe_height`, 3mm):
+  a tube (`pipe_wall` 1mm) round each round dot, or walls (1.5mm) between
+  the square ones. `columns`, `rows` and `pitch` suit other panels.
+
+The examples `wordsearch_clock_through` and `wordsearch_clock_obscured`
+build the clock in a snap-fit case, with a Pico on its floor.
+
 ### Hinges
 
 The pivot lies on the cases' shared rear top edge, so they swing from 0 to
@@ -411,6 +450,19 @@ The nuts are optional: untick **Nuts on the lid's screws** for a case
 (`"screw_nuts": false`, only written when it's off) and the nuts' blocks
 and sockets are left out, which leaves more room inside - M3 screws grip
 the plain 3.2mm holes in the walls well enough without them.
+
+### Snap fit
+
+Tick **Snap fit** (`"snap_fit": true`) and a case's lid snaps on instead,
+as the [wordsearch clock](https://github.com/CrazyRobMiles/PICO-wordsearch-clock)'s
+case does, with no retaining screws or nut blocks. A ridge (0.5mm radius)
+runs along the inside of the lid's skirt on each side, halfway up it,
+reaching 0.25mm past the face of the base's stepped wall into a groove
+0.05mm wider. The ridges stop 15mm short of the ends of each side, and the
+grooves carry on 3mm further, so the corners stay stiff. The groove goes
+into the inner half of the wall, so the walls need to be at least 2.7mm
+thick, and the lid at least 3mm tall; the problems list says if not. It
+works with every style that has retaining screws, and with panel cases.
 
 ### Panel cases
 
@@ -600,6 +652,7 @@ here. For designs from the Python version:
 | `lib/edits.js`, `lib/view.js` | The editor's edits, and what the page draws |
 | `lib/devices.js`, `lib/subassemblies.js`, `lib/catalogue.js` | Devices and subassemblies |
 | `lib/library.js`, `lib/library/` | Devices described as data (ported from boxmaker) |
+| `lib/ledpanels.js` | The devices round a flexible LED panel: the wordsearch faces and the LED arrays |
 | `tools/boxmaker/` | Recording boxmaker's devices and drafting definitions from them |
 | `lib/cases.js`, `lib/hinges.js` | Case and hinge solids |
 | `lib/builder.js`, `lib/worker.js` | Building and checking parts (and the live build's worker thread) |

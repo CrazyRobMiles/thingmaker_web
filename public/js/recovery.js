@@ -46,6 +46,15 @@ export async function unsaved() {
   }
 }
 
+/** Forget the unsaved changes from last time (they were discarded). */
+export async function forget() {
+  try {
+    await idb.remove("autosave", "current");
+  } catch (e) {
+    console.warn("couldn't forget the unsaved changes:", e);
+  }
+}
+
 /** Keep a saved design as an earlier version of its file. */
 export async function keepVersion(path, design) {
   try {

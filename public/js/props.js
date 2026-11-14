@@ -169,6 +169,12 @@ function caseProps(form, ctx, c) {
   form.row("Id", form.line(id, (t) => ctx.rename(id, t)));
   form.row("Style", form.combo(meta.caseStyles, c.style, (v) => set("style", v)));
   if ((meta.screwStyles || []).includes(c.style)) {
+    form.add(form.check("Snap fit", !!c.snap_fit, (v) => set("snap_fit", v), {
+      tip: "Hold the lid on with ridges round the inside of its sides that snap into grooves round the base's walls, " +
+        "instead of retaining screws (as the wordsearch clock's case does). The walls need to be at least 2.7mm thick.",
+    }));
+  }
+  if ((meta.screwStyles || []).includes(c.style) && !c.snap_fit) {
     form.add(form.check("Nuts on the lid's screws", c.screw_nuts !== false, (v) => set("screw_nuts", v), {
       tip: "The lid's M3 retaining screws go into nuts held in blocks inside the base's walls. Untick it to leave the " +
         "nuts and their blocks out (they take up room inside the case): the screws go straight into the walls.",
@@ -324,7 +330,8 @@ function placementProps(form, ctx, id) {
         // The recess depth goes down into the case: negative.
         const [lo, hi] = { recess_depth: [-1000, 0], recess_hole_across: [-1000, 1000], recess_hole_up: [-1000, 1000], angle: [-360, 360] }[name] || [0, 1000];
         // (A count goes up in ones.)
-        widget = form.spin(current, setParam, { lo, hi: name === "fans" ? 20 : hi, step: name === "fans" ? 1 : 0.5 });
+        const count = ["fans", "rows", "columns"].includes(name);
+        widget = form.spin(current, setParam, { lo, hi: name === "fans" ? 20 : hi, step: count ? 1 : 0.5 });
       }
       form.row(labels[name] || paramLabel(name), widget, label);
       if (!name.startsWith("margin_")) form.note(label);

@@ -766,14 +766,26 @@ async function save() {
 }
 
 /** Offer to bring back changes that weren't saved when the editor was last
-closed (or crashed). Resolves true if they were. */
-async function offerUnsaved(saved) {
+closed (or crashed). Resolves true if they were brought back, or the
+design they were made to was opened as it was last saved instead. Closing
+the dialog (Escape) brings them back: only Discard throws them away. */
+async function offerUnsaved(saved, startup = {}) {
   if (!saved) return false;
   const where = saved.path ? saved.path.replace(/^.*[\\/]/, "") : "a design that hasn't been saved yet";
   const when = new Date(saved.time).toLocaleString();
-  if (!(await dialogs.confirm("Unsaved changes", `When thingmaker was last closed, ${where} ("${saved.design.name}") had ` +
-    `changes that weren't saved (${when}). Bring them back?`, "Bring them back", "Discard them"))) {
-    return false;
+  const answer = await dialogs.modal("Unsaved changes", () => ({
+    body: dialogs.el("div", {}, `When thingmaker was last closed, ${where} ("${saved.design.name}") had changes that ` +
+      `weren't saved (${when}). Bring them back, or discard them and ` +
+      (saved.path ? `open ${where} as it was last saved?` : "start a new design?")),
+    buttons: [["Discard them", "discard"], ["Bring them back", "keep", "primary"]],
+  }));
+  if (answer === "discard") {
+    await recovery.forget();
+    // (A design thingmaker was started with comes first.)
+    if (!saved.path || startup.designPath || startup.stlSource) return false;
+    await openPath(saved.path);
+    status(`Discarded the unsaved changes - opened ${where} as it was last saved`, 8000);
+    return true;
   }
   try {
     const res = await api.post("/api/view", { design: saved.design });
@@ -1149,7 +1161,7 @@ async function start() {
   state.meta = await api.get("/api/meta");
   const startup = await api.get("/api/startup");
   await resetState(await api.post("/api/new", { name: "Untitled", withCase: true }), null);
-  if (!(await offerUnsaved(unsaved))) {
+  if (!(await offerUnsaved(unsaved, startup))) {
     if (startup.designPath) await openPath(startup.designPath);
     else if (startup.stlSource) await showStlSource(startup.stlSource);
   }
