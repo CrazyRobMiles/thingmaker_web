@@ -1,7 +1,7 @@
 // The properties panel: the settings of whatever is selected, each change
 // sent to the server as an edit (ctx.change).
 import { typeSelect } from "./groups.js";
-import { fmtG, pyRound } from "/lib/py.js";
+import { fmtG, roundHalfEven } from "/lib/numbers.js";
 
 export const SNAP = 0.5; // mm - drag positions snap to this, and X/Y step by it
 
@@ -57,16 +57,16 @@ class Form {
   rounded to `decimals` places as a spin box would. */
   spin(value, onChange, { lo = -5000, hi = 5000, step = 1, decimals = 1, unit = "mm", zero = null, key = null } = {}) {
     const input = el("input", { type: "number", min: lo, max: hi, step });
-    input.value = String(pyRound(value, decimals));
+    input.value = String(roundHalfEven(value, decimals));
     input.addEventListener("change", () => {
       let v = Number(input.value);
       if (input.value === "" || Number.isNaN(v)) {
-        input.value = String(pyRound(value, decimals));
+        input.value = String(roundHalfEven(value, decimals));
         return;
       }
-      v = Math.min(hi, Math.max(lo, pyRound(v, decimals)));
+      v = Math.min(hi, Math.max(lo, roundHalfEven(v, decimals)));
       input.value = String(v);
-      if (v !== pyRound(value, decimals)) onChange(v);
+      if (v !== roundHalfEven(value, decimals)) onChange(v);
     });
     input.addEventListener("keydown", (e) => {
       if (e.key === "Enter") input.blur();
@@ -290,7 +290,7 @@ function placementProps(form, ctx, id) {
       { tip: `Keep its distance from the ${side} side when the case is resized` }));
   }
   form.row("Stick to", sticks);
-  const [rw, rd] = pv.footprint.map((v) => pyRound(v, 1));
+  const [rw, rd] = pv.footprint.map((v) => roundHalfEven(v, 1));
   form.note(`Footprint ${fmtG(rw)} x ${fmtG(rd)} mm on a ${fmtG(pv.surfaceSize[0])} x ${fmtG(pv.surfaceSize[1])} mm surface. X/Y is ` +
     "the footprint's corner, measured across the surface as seen from the side it is on.");
 

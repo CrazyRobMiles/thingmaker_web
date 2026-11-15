@@ -18,7 +18,7 @@ test("the kernel's solids are exact, closed and measurable", () => {
   kernel.scope(() => {
     const box = kernel.makeBox(10, 10, 10).cut(kernel.makeCylinder(3, 20, [5, 5, -5]));
     assert.ok(box.isValid());
-    // As the Python thingmaker measures it (manifold3d 3.5.4).
+    // As manifold3d 3.5.4 measures it.
     assert.equal(box.Volume.toFixed(6), "719.623623");
     assert.equal(kernel.circleSegments(4), 32);
     assert.equal(box.Solids.length, 1);

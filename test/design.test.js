@@ -32,7 +32,7 @@ test("every example and test design loads, and saving it again changes nothing",
   }
 });
 
-test("files are written as Python writes them", () => {
+test("files are written the same way every time", () => {
   const design = new Design({ name: "Tést", cases: [boxCase()] });
   const text = design.dumps();
   assert.match(text, /"version": 2,/);
@@ -172,14 +172,14 @@ test("a case can fit its height to what's on its walls, floor and lid", () => {
     design.relayout();
     return design;
   };
-  // A 42mm speaker on a wall: its height and its margins - under the retaining screws' nut blocks, as it's as wide as
-  // the wall is long.
+  // A 42mm speaker on a wall: its height and its margins. It's as wide as the wall is long, but its board, on 4mm
+  // pillars, clears the retaining screws' nut blocks (2.7mm deep).
   const wall = sized(true, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" }));
-  assert.equal(wall.cases[0].height, 53.1);
+  assert.equal(wall.cases[0].height, 52.6);
   assert.deepEqual(wall.warnings(), []);
   assert.ok(!wall.warnings().some((w) => /overhangs|sticks out/.test(w)));
   // Without fit_height, the height it was given - but grown, rather than leave the speaker sticking out of it.
-  assert.equal(sized(false, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" })).cases[0].height, 53.1);
+  assert.equal(sized(false, new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" })).cases[0].height, 52.6);
   const tall = new Design({ cases: [boxCase("case", { height: 70.0 })] });
   tall.placements.push(new Placement("s", "SmallSpeaker", "case", { surface: "left", mount: "inside" }));
   tall.relayout();
@@ -202,11 +202,11 @@ test("a case can fit its height to what's on its walls, floor and lid", () => {
   box.placements.push(new Placement("speaker", "SmallSpeaker", "case", { surface: "right", mount: "inside" }),
     new Placement("battery", "BatteryCompartment", "case", { surface: "bottom", mount: "outside", params: { back: "plate" } }));
   box.relayout();
-  assert.equal(box.cases[0].height, 68.7);
+  assert.equal(box.cases[0].height, 74.7);
   assert.deepEqual(box.warnings().filter((w) => !/nut blocks/.test(w)), []);
   // Nothing in it: the height it had.
   assert.equal(sized(true).cases[0].height, 20.0);
-  // Written only when it's on, so other designs are as the Python thingmaker writes them.
+  // Written only when it's on.
   assert.equal(stack.to_dict().cases[0].fit_height, true);
   assert.ok(!("fit_height" in sized(false).to_dict().cases[0]));
   assert.equal(Design.from_dict(JSON.parse(stack.dumps())).cases[0].fit_height, true);

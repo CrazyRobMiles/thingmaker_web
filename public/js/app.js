@@ -11,7 +11,7 @@ import { helpDialog } from "./help.js";
 import { renderProps, SNAP } from "./props.js";
 import * as recovery from "./recovery.js";
 import { View, matrix4, meshGeometry, parseStl, surfaceAt } from "./scene.js";
-import { fmtG, pyRound } from "/lib/py.js";
+import { fmtG, roundHalfEven } from "/lib/numbers.js";
 
 const LIVE_DELAY_MS = 250; // quiet time after a change before the model is rebuilt
 const WATCH_MS = 1000; // how often built STL files are checked for changes
@@ -399,8 +399,8 @@ function updatePropValues(x = null, y = null) {
   if (!state.selection || state.selection[0] !== "placement") return;
   const spec = allPlacements().find((p) => p.id === state.selection[1]);
   if (!spec) return;
-  if (state.propWidgets.x) state.propWidgets.x.value = String(pyRound(x ?? spec.x, 1));
-  if (state.propWidgets.y) state.propWidgets.y.value = String(pyRound(y ?? spec.y, 1));
+  if (state.propWidgets.x) state.propWidgets.x.value = String(roundHalfEven(x ?? spec.x, 1));
+  if (state.propWidgets.y) state.propWidgets.y.value = String(roundHalfEven(y ?? spec.y, 1));
   if (state.propWidgets.rotation) state.propWidgets.rotation.value = String(spec.rotation);
 }
 
@@ -553,8 +553,8 @@ function dragTo(e) {
   const d = state.drag;
   const uv = view3d.surfaceUV(e.clientX, e.clientY, d.matrix);
   if (!uv) return;
-  const x = pyRound((uv[0] + d.offset[0]) / SNAP) * SNAP;
-  const y = pyRound((uv[1] + d.offset[1]) / SNAP) * SNAP;
+  const x = roundHalfEven((uv[0] + d.offset[0]) / SNAP) * SNAP;
+  const y = roundHalfEven((uv[1] + d.offset[1]) / SNAP) * SNAP;
   if (x !== d.x || y !== d.y) {
     d.x = x;
     d.y = y;

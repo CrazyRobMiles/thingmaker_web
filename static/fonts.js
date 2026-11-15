@@ -5,8 +5,8 @@
 // New Roman and Courier New.
 import { el, message, modal } from "../public/js/dialogs.js";
 
-// What Windows calls its own fonts' files - as the Python thingmaker and
-// design files name fonts - by their PostScript names.
+// What Windows calls its own fonts' files - as design files name fonts - by
+// their PostScript names.
 const WINDOWS_NAMES = {
   "ArialMT": "arial", "Arial-BoldMT": "arialbd", "Arial-ItalicMT": "ariali", "Arial-BoldItalicMT": "arialbi",
   "Arial-Black": "ariblk", "ArialNarrow": "arialn", "ArialNarrow-Bold": "arialnb", "ArialNarrow-Italic": "arialni",

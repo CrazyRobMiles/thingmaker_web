@@ -1,5 +1,5 @@
 // The 3D view: three.js drawing of a design (or of printable parts), with
-// picking and dragging. Colours and opacities follow the Python editor's.
+// picking and dragging.
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CSS2DRenderer, CSS2DObject } from "three/addons/renderers/CSS2DRenderer.js";
@@ -458,8 +458,8 @@ export class View {
   }
 }
 
-/** The surface a clicked world point lies on (Design.surface_at() in the
-Python): [case id, surface, mount, [u, v]] or null. */
+/** The surface a clicked world point lies on: [case id, surface, mount,
+[u, v]] or null. */
 export function surfaceAt(view, point, normal, tolerance = 0.75) {
   let best = null;
   for (const c of view.cases) {

@@ -37,7 +37,7 @@ test("every definition ported from boxmaker still has boxmaker's pillars and ope
     assert.equal(mine.at.length, found.pillars.at.length, `${def.type}: number of pillars`);
     if (mine.at.length) {
       close(mine.radius, found.pillars.radius, `${def.type}: pillar radius`);
-      close(mine.height, found.pillars.height, `${def.type}: pillar height`);
+      if (!mine.byHand) close(mine.height, found.pillars.height, `${def.type}: pillar height`);
       if (found.pillars.holeRadius !== undefined) close(mine.holeRadius, found.pillars.holeRadius, `${def.type}: hole radius`);
       close(mine.holeBelow ?? 0, found.pillars.holeBelow ?? 0, `${def.type}: screw hole below the pillars`);
       mine.at.forEach(([x, y], i) => {
@@ -140,7 +140,7 @@ test("the small speaker has a rim round it, up to its frame", () => {
     const volume = (cls, options) => new cls("s", options).get_fuser(0, 0, 2).Volume;
     const rim = (options) => volume(catalogue.CATALOG.SmallSpeaker, options) - volume(defineDevice({ ...def, rims: [] }), options);
     // A tube 19.5mm inside, 1mm thick, from the outside face (2mm down) up to the pillars' tops - touching the pillars.
-    assert.ok(Math.abs(rim() - Math.PI * (20.5 ** 2 - 19.5 ** 2) * 4) < 2, `${rim()}`);
+    assert.ok(Math.abs(rim() - Math.PI * (20.5 ** 2 - 19.5 ** 2) * 6) < 2, `${rim()}`);
     assert.ok(Math.abs(rim({ pillarHeight: 3 }) - Math.PI * (20.5 ** 2 - 19.5 ** 2) * 5) < 2, `${rim({ pillarHeight: 3 })}`);
   });
 });

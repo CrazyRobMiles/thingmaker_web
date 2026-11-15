@@ -119,7 +119,7 @@ export async function connect({ change = false } = {}) {
               "only tells thingmaker the folder's name, not where it is on this computer.)")
             : null,
           el("div", { class: "wide note" }, "thingmaker keeps your designs, subassemblies, pictures, fonts and the STL files it " +
-            "builds in a folder on this computer, laid out as the Python thingmaker's is: designs/, subassemblies/, images/, " +
+            "builds in a folder on this computer, laid out like this: designs/, subassemblies/, images/, " +
             "fonts/ and output/. Choose that folder - your thingmaker repository, say - or an empty one, which is set up with " +
             "the examples. The browser asks to let this site see and change the files in it; nothing else on the computer."),
           el("div", { class: "wide note" }, "Fonts: text is engraved with the fonts in its fonts/ folder, or free stand-ins " +

@@ -1,9 +1,8 @@
 # thingmaker (web)
 
 Design 3D-printable enclosures for electronics by placing devices on the
-surfaces of cases, in a web browser. This is a JavaScript port of the Python
-thingmaker, the editor showing the real, printable parts as you work and
-writing them out as STL files. It comes two ways, sharing all the same code:
+surfaces of cases, in a web browser, the editor showing the real, printable
+parts as you work and writing them out as STL files. It comes two ways, sharing all the same code:
 
 - **The Node version**: a server (`node server.js`) holding the design model
   and the geometry kernel, with designs kept on the server's disk.
@@ -11,18 +10,12 @@ writing them out as STL files. It comes two ways, sharing all the same code:
   everything in the browser - Chrome or Edge - working in a folder on the
   computer the browser's on. See [The web version](#the-web-version).
 
-**The design files are the Python thingmaker's.** Either program opens and
-saves the other's designs, and a design saved by one is byte-for-byte the
-file the other would write. Subassembly folders are shared too. See
-[Compatibility](#compatibility).
-
 ## Setup
 
 - Node.js 18 or later, then `npm install`.
 
 Everything else is JavaScript, or WebAssembly: solids are built with
-[manifold-3d](https://github.com/elalish/manifold) (the same library, and the
-same version, the Python thingmaker uses), text with opentype.js, and the
+[manifold-3d](https://github.com/elalish/manifold), text with opentype.js, and the
 editor draws with three.js.
 
 ## Use
@@ -33,7 +26,6 @@ node server.js output/mybox/print          # just look at some STL files (kept u
 node build.js designs/mybox.json           # build from the command line
 node template.js designs/mybox.json        # device templates (see below)
 npm test                                   # tests
-npm run parity -- ../thingmaker            # check this against the Python thingmaker
 ```
 
 The server prints its address (http://127.0.0.1:8484/ unless that's taken)
@@ -46,8 +38,7 @@ Where things are kept:
 
 - **Designs**: `designs/`, or set `THINGMAKER_DESIGNS`. The Open and Save
   dialogs browse the server's disk, so a design can be anywhere.
-- **Subassemblies**: `subassemblies/`, or set `THINGMAKER_SUBASSEMBLIES` -
-  point it at the Python thingmaker's `subassemblies/` to share them.
+- **Subassemblies**: `subassemblies/`, or set `THINGMAKER_SUBASSEMBLIES`.
 - **Pictures** for decorations: anywhere on disk, though `images/` is the
   place for them; the Browse dialog can also upload one from the computer
   the browser is on into `images/`. See "Picture paths" below.
@@ -211,18 +202,18 @@ GitHub Pages) is a separate site to the browser: it asks for the folder
 again, and keeps its own autosaves and earlier versions.
 
 **Its folder:** the first time, it asks you to choose your thingmaker
-folder, laid out as the Python thingmaker's is - `designs/`,
+folder, laid out as `designs/`,
 `subassemblies/`, `images/`, `fonts/` and `output/`. Your thingmaker
 repository is just right; choose an empty folder and it's set up with the
 examples. The browser asks to let the site see and change the files in that
 folder (and nothing else); it's remembered, and Chrome and Edge can be told
 to allow it on every visit. **File > Change folder...** picks another one.
 Designs, built STLs and templates are ordinary files in that folder, so the
-Python thingmaker and the Node version can work on the same ones.
+Node version can work on the same ones.
 
 - **Fonts** are the ones in the folder's `fonts/` (a web page can't read
   the system's fonts folder) and the free ones the site comes with (below).
-  To engrave with the very fonts the Python version uses, **File >
+  To engrave with the very fonts this computer has, **File >
   Fonts...** copies this computer's into `fonts/`: Chrome and Edge ask to
   let the site see the installed fonts, then copy the ones you tick, named
   as Windows names their files (`arial.ttf`, `arialbd.ttf`), as design
@@ -518,9 +509,8 @@ and optionally inlaid in other colours (`inlay`): select a surface and tick
 **Picture paths:** a picture's `file` is best given relative to the
 thingmaker folder - the one with `designs/` and `images/` in it - as
 `images/camera.jpg`, and that's how thingmaker writes the path of a picture
-you choose from that folder. Then the design works on any computer, in all
-three versions (the Python thingmaker is run from that folder, so finds
-them there). A full path (`C:/pictures/camera.jpg`) works too, on the
+you choose from that folder. Then the design works on any computer, in both
+versions. A full path (`C:/pictures/camera.jpg`) works too, on the
 computer it's on. If a picture isn't where the design says, the Node and
 web versions look in the thingmaker folder: at the end of the path
 (`D:\GitHub\thingmaker\images\overhead.png` is `images/overhead.png`
@@ -547,8 +537,7 @@ each switched on and off like a connector cut), and fixings and holes for
 mounting it on **top** of a surface or **underneath** one. Make one with
 **File > New subassembly...** (the STLs can be on the server's disk or
 uploaded from the browser's computer); it's saved as
-`subassemblies/<Name>/` with a `subassembly.json`, the same as the Python
-thingmaker's.
+`subassemblies/<Name>/` with a `subassembly.json`.
 
 ### Devices from boxmaker
 
@@ -611,32 +600,13 @@ So far:
 | Sensors | BME280 (`BME280`), CCS811 (`CCS811`), PIR motion sensors (`PIRSensor`, `SmallPIRSensor`), RFID reader (`RFIDSensorLidHole`, by hand) |
 | Power | DC to DC converter (`DCtoDC`) |
 
-## Compatibility
+## Limitations
 
-This version is taking over from the Python thingmaker, which isn't being
-developed any more. It opens every Python design and builds the same parts,
-but has things the Python version doesn't (devices on walls, devices from
-boxmaker, fitting a case's height, ...): a design that uses them only opens
-here. For designs from the Python version:
-
-- A design loaded and saved by either is written byte-for-byte as the other
-  would write it - Python's `json.dump(indent=2)` layout, its float
-  formatting and round-half-to-even rounding are reproduced exactly.
-- The layout, the problems list and the build agree: `npm run parity`
-  checks every design in a folder against the Python thingmaker. On the
-  example designs every part has the same number of solids and the same
-  volume. Pictures are traced with ports of the exact Pillow and OpenCV
-  algorithms the Python version uses (resizing, colour reduction, k-means,
-  line simplification), so they agree too, to within a fraction of a percent
-  for `vector` pictures.
-- Text outlines come from opentype.js rather than FreeType, so engraved text
-  can differ from the Python version's by a few microns.
-- The mosaic `dither` setting is accepted but does nothing - as in the
-  Python thingmaker, where Pillow ignores it.
+- The mosaic `dither` setting is accepted but does nothing.
 - TIFF pictures aren't supported.
-- Builds take up to two or three times as long as the Python version's on a
-  big design, as the WebAssembly kernel uses one processor core. The live
-  model is rebuilt on a worker thread, so the editor carries on meanwhile.
+- The WebAssembly kernel uses one processor core, so a big design can take a
+  while to build. The live model is rebuilt on a worker thread, so the
+  editor carries on meanwhile.
 
 ## Layout of the code
 
@@ -658,7 +628,6 @@ here. For designs from the Python version:
 | `lib/builder.js`, `lib/worker.js` | Building and checking parts (and the live build's worker thread) |
 | `lib/decoration.js`, `lib/engraving.js`, `lib/imaging.js` | Decorations, text and picture outlines |
 | `lib/kernel.js`, `lib/geom.js`, `lib/stl.js`, `lib/meshes.js` | The geometry kernel and maths |
-| `lib/py.js` | The Python behaviours the files depend on |
-| `tools/parity.mjs` | Checks this against the Python thingmaker |
+| `lib/numbers.js` | Rounding, number formats, and the design files' JSON layout |
 | `tools/build-static.mjs`, `tools/serve-static.mjs` | Build the web version into `site/`, and serve it locally |
 | `test/`, `test/designs/` | The tests, and the designs they use. `designs/` holds the examples everyone sees (the web version copies them into a new folder), so the tests don't depend on what's in it: any of it can go |

@@ -9,8 +9,7 @@ With a design, it opens it; with an STL file or a folder of them, it shows
 them in the Print parts view (and keeps them up to date as they change).
 
 Designs are kept as JSON files on this machine (designs/ unless you choose
-somewhere else, or set THINGMAKER_DESIGNS); they're the same files the
-Python thingmaker reads and writes. The server only listens on this machine
+somewhere else, or set THINGMAKER_DESIGNS). The server only listens on this machine
 (127.0.0.1) unless told otherwise with --host. */
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -314,7 +313,7 @@ async function handle(req, res) {
     else if (pathname.startsWith("/vendor/three/")) {
       base = THREE_DIR;
       file = path.join(THREE_DIR, pathname.slice("/vendor/three/".length));
-    } else if (pathname === "/lib/geom.js" || pathname === "/lib/py.js") {
+    } else if (pathname === "/lib/geom.js" || pathname === "/lib/numbers.js") {
       base = ROOT;
       file = path.join(ROOT, pathname);
     } else file = path.join(PUBLIC_DIR, pathname);
