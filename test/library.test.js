@@ -145,6 +145,27 @@ test("the small speaker has a rim round it, up to its frame", () => {
   });
 });
 
+test("the small speaker's grille: rings of holes, or one big hole inside the rim", () => {
+  kernel.scope(() => {
+    const surface = (params) => {
+      const [fuser, cutter] = devices.buildGeometry(catalogue.make("SmallSpeaker", "s", params), 0, 0, 2);
+      return devices.applyFuserCutter(kernel.makeBox(60, 60, 2, [-9, -9, -2]), fuser, cutter);
+    };
+    // What's left of the surface (z -2..0) within 19mm of the speaker's middle (21mm in, past its 0.5mm margins).
+    const inside = (shape) => shape.common(kernel.makeCylinder(19.0, 2.0, [21.5, 21.5, -2])).Volume;
+    const disc = Math.PI * 19.0 ** 2 * 2;
+    const holes = inside(surface({}));
+    assert.ok(holes > disc * 0.7 && holes < disc - 1, `${holes}: rings of holes`);
+    assert.ok(inside(surface({ grille: "open" })) < 1e-6, "one big hole");
+    // The rim still stands on a lip round the hole.
+    const lip = surface({ grille: "open" }).common(kernel.makeCylinder(19.5, 2.0, [21.5, 21.5, -2])).Volume;
+    assert.ok(lip > 0.5, `${lip}: a lip`);
+  });
+  assert.throws(() => catalogue.make("SmallSpeaker", "s", { grille: "mesh" }), /grille must be one of holes, open/);
+  const spec = new Placement("s", "SmallSpeaker", "c", { surface: "top", params: { grille: "open" } });
+  assert.equal(Placement.from_dict(spec.to_dict()).params.grille, "open");
+});
+
 test("every device's pillars have open screw holes", () => {
   // A hole ending exactly at its pillar's top could be sealed over, and the bubble left filled in.
   const { applyFuserCutter, buildGeometry, PillarSupportedDevice, PillarType } = devices;

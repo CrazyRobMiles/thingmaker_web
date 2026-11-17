@@ -585,7 +585,10 @@ base with `placeComponent()`:
 Where boxmaker's own code doesn't do what it means to - a hole it makes but
 never cuts, say - a definition can put it right: an opening marked
 `byHand` (saying why) is left out when the tests compare it with boxmaker.
-Each file's notes say what was done by hand, and which sizes are estimates
+A definition can have settings of its own (`params`, shown in the device's
+panel), and an opening can be there only for one of them (`when`): the small
+speaker's **Grille** is rings of holes or, set to `open`, one big hole just
+inside its rim. Each file's notes say what was done by hand, and which sizes are estimates
 to check against the real board.
 
 So far:

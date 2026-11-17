@@ -6,8 +6,8 @@
     {
       "id": "case1",
       "style": "Bevelled",
-      "width": 160.6,
-      "depth": 94.6,
+      "width": 161.6,
+      "depth": 95.6,
       "height": 87.7,
       "lid_height": 5.0,
       "wall_thickness": 3.0,
@@ -22,11 +22,19 @@
       "panel_bolt_spacing": 40.0,
       "panel_nuts": false,
       "position": [
-        -30.3,
-        -7.3,
+        -0.5,
+        -0.5,
         0.0
       ],
-      "rotation": 0.0
+      "rotation": 0.0,
+      "decorations": {
+        "top": {
+          "image": {
+            "file": "images/Minimal Turntable Line Art.png",
+            "angle": 180.0
+          }
+        }
+      }
     }
   ],
   "hinges": [],
@@ -56,7 +64,7 @@
       "case": "case1",
       "surface": "front",
       "mount": "inside",
-      "x": 110.6,
+      "x": 111.6,
       "y": 31.025,
       "rotation": 0,
       "params": {},
@@ -73,7 +81,7 @@
       "surface": "front",
       "mount": "inside",
       "x": 7.0,
-      "y": 31.025,
+      "y": 30.85,
       "rotation": 0,
       "params": {},
       "connector_cuts": {},
@@ -88,8 +96,8 @@
       "case": "case1",
       "surface": "top",
       "mount": "inside",
-      "x": 49.05,
-      "y": 28.15,
+      "x": 49.55,
+      "y": 28.65,
       "rotation": 0,
       "params": {},
       "connector_cuts": {},
@@ -102,7 +110,7 @@
       "case": "case1",
       "surface": "front",
       "mount": "inside",
-      "x": 53.3,
+      "x": 53.8,
       "y": 28.525,
       "rotation": 0,
       "params": {},
@@ -116,8 +124,8 @@
       "case": "case1",
       "surface": "top",
       "mount": "inside",
-      "x": 122.05,
-      "y": 39.1,
+      "x": 122.55,
+      "y": 40.1,
       "rotation": 0,
       "params": {
         "margin_front": 3.0
@@ -137,10 +145,29 @@
       "surface": "top",
       "mount": "inside",
       "x": 0.0,
-      "y": 25.45,
+      "y": 25.95,
       "rotation": 0,
       "params": {
         "margin_left": 3.5
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "left"
+      ]
+    },
+    {
+      "id": "hole1",
+      "type": "Hole",
+      "case": "case1",
+      "surface": "back",
+      "mount": "inside",
+      "x": 1.0,
+      "y": 38.525,
+      "rotation": 0,
+      "params": {
+        "diameter": 12.5,
+        "margin_left": 6.5
       },
       "connector_cuts": {},
       "connector_cut_targets": null,
