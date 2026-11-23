@@ -228,6 +228,7 @@ function owner(partId) {
 }
 
 function refreshScene() {
+  if (!state.view) return; // (still starting, or it couldn't start)
   if (state.printView) {
     if (state.stlSource) {
       view3d.showPrint([...state.printMeshes].map(([name, m]) => ({ name, geometry: m.geometry })), "No STL files there");
@@ -390,6 +391,7 @@ async function browsePicture(current) {
 }
 
 function rebuildProps_() {
+  if (!state.design) return; // (still starting, or it couldn't start)
   state.propWidgets = renderProps($("#props"), propsContext());
 }
 
