@@ -596,7 +596,7 @@ So far:
 | Category | Devices (boxmaker class) |
 | --- | --- |
 | Processors | Raspberry Pi Pico (`PICO`), ESP32 DevKit (`DOITESP32`, by hand: boxmaker's own code for it fails), Wemos (`WEMOS`), Arduino Leonardo (`Leonardo`) |
-| Displays | small OLED (`SmallOled`), small OLED with window (`SmallOledHole`), 14-segment display (`Alpha14Seg`) |
+| Displays | small OLED (`SmallOled`), small OLED with window (`SmallOledHole`), 14-segment display (`Alpha14Seg`), ESP32 2.8" display (ESP32-2432S028R, not boxmaker's: from the maker's drawings) |
 | Sound | small speaker (`SmallSpeaker`), audio amplifier (`AudioAmplifier`) |
 | Lights | pixel ring with light pipes (`PixelRingLightPipeLid`), 8x8 NeoPixel matrices with light pipes (`NeoPixel8x8LidLightPipe`, `SmallNeoPixel8x8LidLightPipe`) |
 | Buttons and controls | rotary pot (`RotaryPot`), joystick (`Joystick`), push buttons (`MediumButton`, `BigButton` by hand, `HugeButton`) |
