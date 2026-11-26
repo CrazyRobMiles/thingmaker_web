@@ -23,11 +23,13 @@ async function prepare(route, body, query) {
     case "POST /api/view":
     case "POST /api/save":
     case "POST /api/template":
+    case "POST /api/picture/preview":
       await loadPictures(body.design);
       break;
     case "POST /api/edit":
       await loadPictures(body.design);
       if (body.edit && body.edit.op === "decoration_set" && body.edit.field === "file") await files.loadPicture(body.edit.value);
+      if (body.edit && body.edit.op === "set_param" && body.edit.name === "picture_file") await files.loadPicture(body.edit.value);
       break;
     case "GET /api/browse":
       await files.loadDir("/");

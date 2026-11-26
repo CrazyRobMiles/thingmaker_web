@@ -1,0 +1,64 @@
+{
+  "format": "thingmaker-design",
+  "version": 2,
+  "name": "Picture frame",
+  "cases": [
+    {
+      "id": "frame",
+      "style": "Frame",
+      "width": 150.0,
+      "depth": 100.0,
+      "height": 6.0,
+      "lid_height": 5.0,
+      "wall_thickness": 2.0,
+      "base_thickness": 2.0,
+      "lid_thickness": 2.0,
+      "edge": 3.0,
+      "min_width": 150.0,
+      "min_depth": 100.0,
+      "frame_width": 12.0,
+      "frame_lip": 5.0,
+      "frame_front": 3.0,
+      "frame_profile": "bevelled",
+      "position": [
+        -25.0,
+        -10.0,
+        0.0
+      ],
+      "rotation": 0.0,
+      "decorations": {
+        "top": {
+          "image": {
+            "file": "images/landscape.png",
+            "style": "fill",
+            "colours": 5.0,
+            "palette": "#96cdf0 #ffffff #f5c020 #4fa046 #1e5a28",
+            "detail": 0.3
+          }
+        }
+      }
+    }
+  ],
+  "hinges": [],
+  "devices": [
+    {
+      "id": "hanger",
+      "type": "KeyholeHanger",
+      "case": "frame",
+      "surface": "bottom",
+      "mount": "outside",
+      "x": 67.5,
+      "y": 60.5,
+      "rotation": 0,
+      "params": {
+        "margin_back": 15.0
+      },
+      "connector_cuts": {},
+      "connector_cut_targets": null,
+      "stick": [
+        "back"
+      ]
+    }
+  ],
+  "subassemblies": []
+}

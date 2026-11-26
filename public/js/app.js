@@ -378,6 +378,8 @@ function propsContext() {
     design: state.design, view: state.view, meta: state.meta, selection: state.selection,
     change, select, addPlacementDialog, addPlacement, rotate: rotatePlacement, deleteSelected, rename, saveTemplate,
     browsePicture,
+    // (Of a surface's decoration, {case, surface}, or a stamp's, {placement}.)
+    picturePreview: (which) => api.post("/api/picture/preview", { design: state.design, ...which }),
   };
 }
 

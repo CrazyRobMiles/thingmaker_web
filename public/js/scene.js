@@ -238,6 +238,7 @@ export class View {
     this.clear();
     const root = this.root;
     const showBuilt = options.built && built && built.parts.size > 0;
+    const lidParts = new Set(view.cases.flatMap((c) => c.lidParts || []));
 
     for (const c of view.cases) {
       if (!shown(["case", c.id])) continue;
@@ -270,12 +271,13 @@ export class View {
     if (showBuilt) {
       for (const [partId, part] of built.parts) {
         if (!shown(owner(partId))) continue;
-        let kind = partId.endsWith(".lid") ? "lid" : "base";
+        let kind = lidParts.has(partId) ? "lid" : "base";
         let color = null;
-        if (partId.includes(".deco.")) {
+        if (partId.includes(".deco.") || partId.includes(".stamp.")) {
+          // (A decoration's or a stamp's inlay.)
           kind = "inlay";
-          const parent = partId.split(".deco.")[0];
-          if (parent.endsWith(".lid") && !options.lids) continue;
+          const parent = partId.split(/.deco.|.stamp./)[0];
+          if (lidParts.has(parent) && !options.lids) continue;
           if (part.colour) color = rgb(...part.colour.map((v) => v / 255));
         } else if (partId.includes(".inlay")) {
           kind = "inlay";
@@ -331,16 +333,48 @@ export class View {
   _caseSlabs(c, cm, showLid) {
     const W = c.width, D = c.depth, H = c.height;
     const t = c.wall_thickness, bt = c.base_thickness, lt = c.lid_thickness, lh = c.lid_height;
+    // (The base's walls stop at the join with the lid, join_drop below the top.)
+    const drop = c.join_drop || 0, J = H - drop;
     const B = (x, y, z, w, d, h) => ({ x, y, z, w, d, h });
-    this._box(this.root, B(-t, -t, -bt, W + 2 * t, D + 2 * t, bt), cm, COLORS.base, 1.0, { edges: true });
-    for (const slab of [B(-t, -t, 0, W + 2 * t, t, H), B(-t, D, 0, W + 2 * t, t, H), B(-t, 0, 0, t, D, H), B(W, 0, 0, t, D, H)]) {
-      this._box(this.root, slab, cm, COLORS.base, 0.55, { edges: true });
+    const walls = (z, h) => [B(-t, -t, z, W + 2 * t, t, h), B(-t, D, z, W + 2 * t, t, h), B(-t, 0, z, t, D, h), B(W, 0, z, t, D, h)];
+    if (c.frame && c.frame.simple) {
+      // A simple picture frame: the frame, and the picture's plate snapped into it.
+      const f = c.frame;
+      const [x0, y0, x1, y1] = [-t - f.gap, -t - f.gap, W + t + f.gap, D + t + f.gap];
+      const o = f.width;
+      for (const slab of [B(x0 - o, y0 - o, 0, x1 - x0 + 2 * o, o, H + lt + f.front), B(x0 - o, y1, 0, x1 - x0 + 2 * o, o, H + lt + f.front),
+        B(x0 - o, y0, 0, o, y1 - y0, H + lt + f.front), B(x1, y0, 0, o, y1 - y0, H + lt + f.front)]) {
+        this._box(this.root, slab, cm, COLORS.base, 0.55, { edges: true });
+      }
+      if (showLid) this._box(this.root, B(-t, -t, H, W + 2 * t, D + 2 * t, lt), cm, COLORS.lid, 0.35, { edges: true });
+      return;
     }
+    this._box(this.root, B(-t, -t, -bt, W + 2 * t, D + 2 * t, bt), cm, COLORS.base, 1.0, { edges: true });
+    if (c.frame) {
+      // A picture frame: its back (a tray), the picture's plate on it, and
+      // the frame round both, its front over the plate's edges.
+      for (const slab of walls(0, H)) this._box(this.root, slab, cm, COLORS.base, 0.55, { edges: true });
+      if (!showLid) return;
+      this._box(this.root, B(-t, -t, H, W + 2 * t, D + 2 * t, lt), cm, COLORS.lid, 0.35, { edges: true });
+      // A rectangular ring from `inner` to `outer` out from the plate's edges.
+      const ring = (inner, outer, z, h) => {
+        const [x0, y0, x1, y1] = [-t - inner, -t - inner, W + t + inner, D + t + inner];
+        const o = outer - inner;
+        return [B(x0 - o, y0 - o, z, x1 - x0 + 2 * o, o, h), B(x0 - o, y1, z, x1 - x0 + 2 * o, o, h),
+          B(x0 - o, y0, z, o, y1 - y0, h), B(x1, y0, z, o, y1 - y0, h)];
+      };
+      const f = c.frame;
+      for (const slab of ring(f.gap, f.gap + f.width, -bt, H + bt + lt)) this._box(this.root, slab, cm, COLORS.lid, 0.35, { edges: true });
+      for (const slab of ring(-f.lip, f.gap + f.width, H + lt, f.front)) this._box(this.root, slab, cm, COLORS.lid, 0.35, { edges: true });
+      return;
+    }
+    for (const slab of walls(0, J)) this._box(this.root, slab, cm, COLORS.base, 0.55, { edges: true });
     if (showLid) {
       this._box(this.root, B(-t, -t, H, W + 2 * t, D + 2 * t, lt), cm, COLORS.lid, 0.35, { edges: true });
+      if (drop > 0) for (const side of walls(J, drop)) this._box(this.root, side, cm, COLORS.lid, 0.35, { edges: true });
       const h2 = t / 2.0;
-      for (const skirt of [B(-t, -t, H - lh, W + 2 * t, h2, lh), B(-t, D + h2, H - lh, W + 2 * t, h2, lh),
-        B(-t, -t, H - lh, h2, D + 2 * t, lh), B(W + h2, -t, H - lh, h2, D + 2 * t, lh)]) {
+      for (const skirt of [B(-t, -t, J - lh, W + 2 * t, h2, lh), B(-t, D + h2, J - lh, W + 2 * t, h2, lh),
+        B(-t, -t, J - lh, h2, D + 2 * t, lh), B(W + h2, -t, J - lh, h2, D + 2 * t, lh)]) {
         this._box(this.root, skirt, cm, COLORS.lid, 0.35, { pickable: false });
       }
     }

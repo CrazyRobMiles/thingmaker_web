@@ -266,7 +266,8 @@ A design is a JSON file that lists:
   edge rounded, radius `edge`) or `Bevelled` (every outside edge bevelled
   at 45 degrees, `edge` in from each face). On Rounded and Bevelled cases
   the joint between base and lid stays square, and the problems list warns
-  if the edges leave less than 1mm of wall.
+  if the edges leave less than 1mm of wall. A `Frame` is a picture frame
+  (see Picture frames).
 - **hinges**: knuckle hinges joining two cases along an edge. The second
   case is positioned by the hinge at its open angle.
 - **devices**: boards and modules built into thingmaker (`lib/devices.js`),
@@ -359,6 +360,36 @@ countersunk screw at the other; its back is part of the case (`back:
 recess`) or a separate plate (`back: plate`, `<id>.back`) screwed into
 pillars. A decoration on the face carries on across the cover.
 
+### Cold shoe foot
+
+A **Cold shoe foot** (under Other) goes on the outside of a case, so it can
+be fixed to a camera's accessory shoe - a cold shoe, with no contacts - or
+anything else with one. The foot is a part of its own (`<id>.foot`), a T
+in section: a neck (`neck_width` 12mm, `neck_height` 3mm) and a plate
+(`plate_width` 17.8mm, `plate_thickness` 1.9mm, `length` 18mm) that slides
+under the shoe's rails - ISO 518's sizes, a little under for printing;
+adjust them to fit a particular camera. It slides in along its length,
+the plate's corners at its leading end cut off at 45 degrees (`lead_in`,
+2mm each way; 0 for square corners) to guide it in between the rails. Two
+countersunk self-tapping screws (`screw_diameter` 2.9mm, `screw_length`
+10mm) go through it, their heads flush with the plate's face, into pilot
+holes in bosses inside the case (`boss_height` 4mm, 0 for none). On the
+floor, the lid or a panel the foot comes out lying on its plate, and prints
+without supports; on the wall of a one-piece case it stands on its end -
+fine too, as long as it slides upright.
+
+### Keyhole hanger
+
+A **Keyhole hanger** (under Other) is a keyhole slot in the outside of a
+case - a picture frame's back, mostly - to hang it on a screw in a wall. The
+screw's head goes in through the hole (`head_diameter` 9mm), and the case
+drops so the shank slides up the slot (`shank_width` 4.5mm, `slot_length`
+10mm), the head held behind the slot's edges (`lip` 1.6mm thick) in a
+channel as wide as the hole (`head_depth` 3mm). The slot runs up from the
+hole along the device's Y: on a frame's back, towards the top of its
+picture. It's cut into a boss inside the case, as deep as it needs past the
+surface's own thickness.
+
 ### Vents
 
 A **Vent** (under Ventilation) cuts a pattern through the surface it's on:
@@ -430,6 +461,22 @@ into the innermost knuckle), `gap` (holds the shut cases apart), `cable_gap`
 wedges), and `bolt_head_diameter`/`bolt_head_height` (slots in the lids for
 the bolts' heads). Every build swings each hinge through its range and
 reports any overlap.
+
+### Where the lid meets the base
+
+The lid is its top and a skirt (**Lid skirt height**, `lid_height`) that
+wraps over a step round the top of the base's walls. **Lid join below the
+top** (`join_drop`, mm; 0, the default, isn't written to the file) brings
+the lid's sides down the case that far, full thickness, before its skirt,
+so the lid meets the base lower down - as the
+[wordsearch clock](https://github.com/CrazyRobMiles/PICO-wordsearch-clock)'s
+case does, its base and lid the same height. The inside of the case is the
+same either way. What's at the join goes down with it: the step, the
+retaining screws and their nut blocks (or the snap fit), a panel case's
+corner bolts; a hinge's anchor reaches down past it into the base. Devices
+on a wall are in the base's wall, so they keep below the join (and below
+the step, if they cut through it), and the case grows taller if it needs
+to; a decoration on a wall carries on across the lid's sides.
 
 ### Retaining screws
 
@@ -517,11 +564,125 @@ web versions look in the thingmaker folder: at the end of the path
 there), or in `images/`. The example designs' pictures are in `images/`.
 
 Text uses any installed TrueType or OpenType font, by its file's name. A
-picture (PNG, JPEG, GIF or BMP) is drawn as an `outline` (its dark parts), a
-`mosaic`, `dots` or `lines` grid of a few colours, or `vector` lines traced
-round (`trace: outlines`) or along (`trace: centre`) its patches of colour.
-Each inlay is a part of its own, `<part>.deco.<surface>.<layer>.stl`, in the
-same frame as the part, for loading into the slicer together as one object.
+picture (PNG, JPEG, GIF or BMP) is drawn as an `outline` (its dark parts),
+`fill` (patches of a few colours, like a poster, fitting together with no
+gaps), `posterise` (square pixels, as the FreeCAD examples' mosaics and
+jigsaws make them: the picture shrunk to `columns` pixels across and its
+colours found there by median cut, as Pillow does it), a `mosaic`, `dots`
+or `lines` grid of a few colours, or `vector`
+lines traced round (`trace: outlines`) or along (`trace: centre`) its
+patches of colour. Each inlay is a part of its own,
+`<part>.deco.<surface>.<layer>.stl`, in the same frame as the part, for
+loading into the slicer together as one object. Each inlay sits in a pocket 0.01mm bigger
+all round than itself, and pieces of one that would only touch at a corner
+(as a posterised picture's diagonal squares do) are parted by as much: parts
+that touched along an edge would share it between four faces, which slicers
+report as faces the wrong way round. `dither: yes` dithers a
+posterise, mosaic, dots or lines picture between its colours
+(Floyd-Steinberg), for the shades between them. Text and pictures on the
+top read the right way up from the front of the case, as on the walls.
+
+**Colours:** a `fill`, `posterise`, mosaic or `vector` picture is reduced to
+`colours` colours (found once, from a copy of the picture 200 pixels
+across, so they're the same in every style and at any size - but a
+posterised picture's are found in its own pixels, by median cut). Each is printed in a
+filament, a part of its own named after the filament's number
+(`image1`, `image2` ...):
+
+- with no `palette`, each of the picture's colours is a filament of its own;
+- a `palette` lists the filaments you have (`"#202020 #f0f0f0 #c03030"`),
+  and each of the picture's colours goes to the nearest;
+- a `mapping` says which filament each of the picture's colours (darkest
+  first) goes to: a filament's number, `-` to leave it out (the case shows
+  there), or `*` for the nearest - `"1 2 2 - 3"`. Several can share a
+  filament.
+
+The editor shows this under **Picture colours** when a surface with a
+picture is selected: the picture beside how it'll be printed, the palette
+(click a colour to change it, + to add one), and each of the picture's
+colours with the filament it goes to.
+
+### A band round the walls
+
+A case's decorations can also have a band right round the outside of its
+walls, `around`, which carries on round the corners: select the case and
+tick **Text** and/or **Picture** under **Band round the walls**. It's the
+walls unrolled into one long strip, as high as the case (floor to lid) and
+as long as the way round it, its text and picture centred on the middle of
+the front, `across` moving them round the case (to the right, as seen from
+outside). Its settings are a face's.
+
+```json
+"decorations": {"around": {"text": {"text": "all the way round", "size": 12, "across": 40}}}
+```
+
+Round a MusicBox or Rounded case's rounded upright corners it's bent round
+them; round a Bevelled case's it's folded at the bevels - either way
+exactly, nothing stretched. It can't be cut deeper than the corners are
+round (5mm on a MusicBox, `edge` on a Rounded case), or it'd fold up on
+itself. The band is on top of the walls' own decorations (they're left out
+where its text and picture are), and stamps are on top of the band. A
+frame's sides are covered by its frame, so it has none.
+
+### Stamps
+
+A **Stamp** (under Other) is text and a picture engraved into the outside of
+a case in a rectangle of its own (`stamp_width` x `stamp_height`, 40 x 30mm
+to start with), placed, turned, stuck to the sides and given margins like
+any other device - so a face can have several, wherever they're wanted.
+Its text and picture have exactly the settings a decoration's do, drawn by
+the same code (whatever a picture can do, a stamp's can), kept in its
+parameters as `text_<setting>` and `picture_<setting>`:
+
+```json
+{"id": "logo", "type": "Stamp", "case": "main", "surface": "top", "mount": "outside",
+ "params": {"stamp_width": 30, "text_text": "thingmaker", "picture_file": "images/camera.png",
+            "picture_style": "posterise", "picture_palette": "#202020 #f0f0f0 #c03030"}}
+```
+
+There's text if `text_text` says something, and a picture if
+`picture_file` names one. Their inlays are parts of their own,
+`<part>.stamp.<stamp>.<layer>.stl`. A stamp is drawn on top of the face's
+decoration: the decoration's left out wherever the stamp's text and
+picture are (and shows through between them).
+
+### Picture frames
+
+A case of style **Frame** is a picture frame, lying on its back with its
+picture facing up. It's printed as:
+
+- `<case>.picture`: the picture's plate (the case's lid, with no skirt),
+  its picture inlaid in its face - the top's decorations, fitted to the
+  window in the frame and carrying on a little way under it;
+- `<case>.back`: a tray the plate sits on (the case's base), with the
+  case's height of room behind the picture for anything in it;
+- `<case>.frame`: the frame round them, `frame_width` (12mm) wide, its
+  front `frame_front` (3mm) thick and over the plate's edges by
+  `frame_lip` (5mm). Its front's outside edge and the edge round the window
+  are `frame_profile` `flat`, `bevelled` (the default) or `rounded`, by
+  `edge`;
+- `<case>.buttons`: turn buttons, one on each side (two on a side over
+  120mm), screwed into the back of the frame with 2.9mm self-tapping screws
+  and turned over the back to hold it in (`frame_buttons: false` to leave
+  them out).
+
+The picture, the frame and the back print face down; the buttons as they
+are. The plate and the back drop into the frame from behind. Devices go on
+the picture (the top) or the back (the bottom) - a **Keyhole hanger** on
+the back hangs it on a wall - not the sides, which the frame covers. The
+example `designs/picture_frame.json` is a landscape in five colours.
+
+A **simple** frame (`frame_type: "simple"`; the default is `full`, as
+above) is just two parts: `<case>.frame` and `<case>.picture`. The plate
+is pushed into the frame from behind and snaps in, as a snap-fit case's lid
+does: ridges round the inside of the frame, stopping short of its corners so
+its sides can spring out, click into a groove round the plate's edge, which
+needs a plate at least 1.6mm thick. The case's height is how far the frame
+stands out behind the picture. A hook hole - a keyhole for a screw or nail
+with a head up to 7mm across - is cut into the back of the frame's top rail,
+halfway along (`frame_hook: false` to leave it out); it needs the frame at
+least 12mm wide and 5.1mm deep. A simple frame has no back, so nothing can
+go on its bottom.
 
 ### Device templates
 
@@ -605,7 +766,6 @@ So far:
 
 ## Limitations
 
-- The mosaic `dither` setting is accepted but does nothing.
 - TIFF pictures aren't supported.
 - The WebAssembly kernel uses one processor core, so a big design can take a
   while to build. The live model is rebuilt on a worker thread, so the
@@ -625,11 +785,12 @@ So far:
 | `lib/edits.js`, `lib/view.js` | The editor's edits, and what the page draws |
 | `lib/devices.js`, `lib/subassemblies.js`, `lib/catalogue.js` | Devices and subassemblies |
 | `lib/library.js`, `lib/library/` | Devices described as data (ported from boxmaker) |
+| `lib/coldshoe.js`, `lib/hanger.js`, `lib/stamp.js` | The cold shoe foot, the keyhole hanger and the stamp |
 | `lib/ledpanels.js` | The devices round a flexible LED panel: the wordsearch faces and the LED arrays |
 | `tools/boxmaker/` | Recording boxmaker's devices and drafting definitions from them |
 | `lib/cases.js`, `lib/hinges.js` | Case and hinge solids |
 | `lib/builder.js`, `lib/worker.js` | Building and checking parts (and the live build's worker thread) |
-| `lib/decoration.js`, `lib/engraving.js`, `lib/imaging.js` | Decorations, text and picture outlines |
+| `lib/decoration.js`, `lib/band.js`, `lib/engraving.js`, `lib/imaging.js` | Decorations (and the band round the walls), text and picture outlines |
 | `lib/kernel.js`, `lib/geom.js`, `lib/stl.js`, `lib/meshes.js` | The geometry kernel and maths |
 | `lib/numbers.js` | Rounding, number formats, and the design files' JSON layout |
 | `tools/build-static.mjs`, `tools/serve-static.mjs` | Build the web version into `site/`, and serve it locally |

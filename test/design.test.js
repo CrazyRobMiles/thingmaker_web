@@ -258,3 +258,40 @@ test("a recess's width and height are extra space round the device, half on each
   const turned = new Placement("p", "Pico", "case1", { rotation: 90, params: { recess_depth: -5, recess_width: 10 } }).make();
   assert.deepEqual([turned.width, turned.depth], [w, d + 10]);
 });
+
+test("a case's lid can come down its sides, so it meets the base lower down", () => {
+  // As the wordsearch clock's: the base and the lid the same height.
+  const kase = boxCase("case", { height: 40.0, min_width: 60, min_depth: 50, join_drop: 20.0 });
+  assert.equal(dm.joinHeight(kase), 20.0);
+  assert.equal(kase.to_dict().join_drop, 20.0);
+  assert.equal(boxCase().to_dict().join_drop, undefined, "0 isn't written to the file");
+  assert.equal(CaseSpec.from_dict({ id: "c", style: "Square" }).join_drop, 0.0);
+  assert.throws(() => boxCase("c", { join_drop: -1 }), /can't be negative/);
+  const design = new Design({ cases: [kase] });
+  design.relayout();
+  kernel.scope(() => {
+    const [shapes] = buildParts(design, { log: () => {} });
+    const [parts, problems] = check(design, shapes);
+    assert.deepEqual(problems, []);
+    for (const pid of ["case.base", "case.lid"]) assert.equal(parts[pid].solids, 1, pid);
+    const inCase = (pid) => shapes[pid].transformed(dm.partInCaseMatrix(kase, pid));
+    const base = inCase("case.base").bounds();
+    const lid = inCase("case.lid");
+    // The base's walls stop at the join; the lid's sides come down to it, and its skirt on over the step below.
+    assert.ok(Math.abs(base[5] - 20.0) < 1e-6, `the base's walls stop at ${base[5]}`);
+    assert.ok(Math.abs(lid.bounds()[4] - (20.0 - kase.lid_height)) < 1e-6, `the lid's skirt ends at ${lid.bounds()[4]}`);
+    assert.ok(lid.common(inCase("case.base")).Volume < 1e-6, "the lid and the base overlap");
+    // The retaining screws and their nut blocks go down with the join.
+    assert.ok(dm.screwHeight(kase) < 20.0 && dm.screwHeight(kase) > 20.0 - kase.lid_height);
+  });
+  // What's on a wall is in the base's wall, so it stays below the join (and below the step, if it cuts through).
+  design.placements.push(new Placement("vent", "Vent", "case", { surface: "front", mount: "inside" }));
+  design.relayout();
+  const spec = design.placements[0];
+  const item = spec.make();
+  const top = Math.max(...item.body_boxes().map((b) => b.transformedBounds(design.placement_case_matrix(spec, item))[5]));
+  assert.ok(top <= dm.joinHeight(design.cases[0]) - dm.lidFitDepth(design.cases[0]) + 1e-6, `the vent reaches ${top}`);
+  // Too far down, there's no base wall left below the skirt.
+  const low = new Design({ cases: [boxCase("c", { height: 30.0, join_drop: 26.0 })] });
+  assert.match(low.problems()[0][0], /leaves no base walls below its skirt; make it at most 23\.8/);
+});

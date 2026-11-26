@@ -146,6 +146,20 @@ input:focus, select:focus, textarea:focus, button:focus-visible { outline: 2px s
 #props .row .field > input, #props .row .field > select { flex: 1; width: 100%; }
 #props .unit { color: var(--muted); font-size: 12px; white-space: nowrap; }
 #props .note { color: var(--muted); font-size: 12px; margin: 2px 0 6px; }
+#props .colour-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 8px; }
+#props .colour-preview figure { margin: 0; }
+#props .colour-preview canvas { width: 100%; height: auto; display: block; border: 1px solid #bbb;
+  background: repeating-conic-gradient(#ddd 0 25%, #fff 0 50%) 0 0 / 8px 8px; }
+#props .colour-preview canvas.printed { image-rendering: pixelated; }
+#props .colour-preview figcaption { color: var(--muted); font-size: 11px; text-align: center; }
+#props .swatch { display: inline-block; width: 16px; height: 16px; border: 1px solid #888; border-radius: 3px; flex: none; }
+#props .swatch.left-out { background: repeating-conic-gradient(#ccc 0 25%, #fff 0 50%) 0 0 / 6px 6px; }
+#props .filaments { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 2px 0 8px; }
+#props .filament { display: inline-flex; align-items: center; gap: 3px; }
+#props .filament input[type=color] { width: 28px; height: 22px; padding: 0; border: 1px solid #888; }
+#props button.small { padding: 1px 6px; font-size: 12px; }
+#props .mapping { display: flex; flex-direction: column; gap: 3px; margin: 2px 0 8px; }
+#props .map-row { display: grid; grid-template-columns: 18px 14px 1fr 18px; align-items: center; gap: 6px; }
 #props .placed { display: flex; flex-direction: column; gap: 2px; margin: 2px 0 8px; }
 #props .placed-item { display: flex; justify-content: space-between; gap: 8px; text-align: left; padding: 3px 6px;
   border: 1px solid var(--border); border-radius: 4px; background: var(--panel); cursor: pointer; }

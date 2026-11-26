@@ -38,12 +38,15 @@ export async function loadLibraries() {
   await files.loadDir("/subassemblies", { recursive: true, contents: true });
 }
 
-/** Read every picture a design's decorations use. */
+/** Read every picture a design's decorations and stamps use. */
 export async function loadPictures(design) {
   for (const c of (design && design.cases) || []) {
     for (const layers of Object.values(c.decorations || {})) {
       if (layers.image && layers.image.file) await files.loadPicture(layers.image.file);
     }
+  }
+  for (const spec of (design && design.devices) || []) {
+    if (spec.params && spec.params.picture_file) await files.loadPicture(spec.params.picture_file);
   }
 }
 

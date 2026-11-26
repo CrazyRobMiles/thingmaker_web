@@ -180,7 +180,34 @@ function caseProps(form, ctx, c) {
         "nuts and their blocks out (they take up room inside the case): the screws go straight into the walls.",
     }));
   }
-  form.add(form.check("Bolted-together panels", !!c.panels, (v) => set("panels", v), {
+  const frame = c.style === meta.frameStyle;
+  if (frame) {
+    if (c.frame_type === "simple") {
+      form.note("A simple picture frame, lying on its back: its picture is on a plate (the top) that snaps into the " +
+        "frame from behind, its front over the plate's edges, with a hook hole in the back of the frame's top rail. " +
+        "The height is how far the frame stands out behind the picture. Both print face down.");
+    } else {
+      form.note("A picture frame, lying on its back: its picture is on a plate (the top) in front of a tray (its back, the " +
+        "bottom, with room behind the picture for anything in it); the frame goes round them, its front over the plate's " +
+        "edges, and turn buttons screwed to it hold the back in. They print face down.");
+    }
+    const titles = { frame_type: "Type", frame_width: "Frame width", frame_lip: "Over the picture", frame_front: "Front thickness", frame_profile: "Profile" };
+    for (const [name, , label, choices] of meta.frameFields) {
+      const title = titles[name] || paramLabel(name);
+      if (choices) form.row(title, form.combo(choices, c[name], (v) => set(name, v)), label);
+      else form.row(title, form.spin(c[name], (v) => set(name, v), { lo: 0.5, hi: 500 }), label);
+    }
+    if (c.frame_type === "simple") {
+      form.add(form.check("Hook hole", c.frame_hook !== false, (v) => set("frame_hook", v), {
+        tip: "A keyhole in the back of the frame's top rail (the top of the picture), to hang it on a screw or nail " +
+          "with a head up to 7mm across. The frame needs to be at least 12mm wide.",
+      }));
+    } else form.add(form.check("Turn buttons", c.frame_buttons !== false, (v) => set("frame_buttons", v), {
+      tip: "Buttons screwed into the back of the frame (with 2.9mm self-tapping screws) that turn over the back to hold it " +
+        "in. Untick them to hold it in some other way.",
+    }));
+  }
+  if (!frame) form.add(form.check("Bolted-together panels", !!c.panels, (v) => set("panels", v), {
     tip: "Make the base from a floor and four walls, printed flat and bolted together with M3 bolts, butt jointed " +
       "with fillets along the inside of the joints - so devices can be fitted to each panel before it goes together. The bolts go into blocks inside " +
       "the walls, which what's in the case is kept clear of. The lid stays one piece.",
@@ -195,9 +222,17 @@ function caseProps(form, ctx, c) {
   }
   form.row("Inside width x depth", `${fmtG(c.width)} x ${fmtG(c.depth)} mm`,
     "Worked out from what's placed in it: every case gets the width and depth the largest one needs, or the largest minimum.");
-  for (const [name, , label] of meta.caseFields.slice(1)) {
+  // (A frame's parts are its back, picture and frame.)
+  const frameLabels = {
+    height: "Space behind the picture (mm)", wall_thickness: "Back's wall thickness (mm)", base_thickness: "Back thickness (mm)",
+    lid_thickness: "Picture's plate thickness (mm)", edge: "Edge: the size of the frame's bevel or rounding (mm)",
+  };
+  for (let [name, , label] of meta.caseFields.slice(1)) {
     if (name === "width" || name === "depth") continue;
-    if (name === "edge" && !meta.edgeStyles.includes(c.style)) continue; // only Rounded and Bevelled cases have shaped edges
+    if (frame && (name === "lid_height" || name === "join_drop")) continue; // (no skirt on a frame's plate)
+    // Only Rounded and Bevelled cases, and frames that aren't flat, have shaped edges.
+    if (name === "edge" && !meta.edgeStyles.includes(c.style) && !(frame && c.frame_profile !== "flat")) continue;
+    if (frame && frameLabels[name]) label = frameLabels[name];
     if (name === "height") {
       const tip = "Worked out from what's in it: room for what's on its walls, and for what stands on its floor and hangs " +
         "from its lid, with a little to spare";
@@ -220,9 +255,14 @@ function caseProps(form, ctx, c) {
     });
     form.row("Rotation", form.spin(c.rotation, (v) => set("rotation", v, false), { lo: -360, hi: 360, step: 90, unit: "deg" }));
   }
-  form.note(`Parts: ${(c.panels ? ["floor", "front", "back", "left", "right"] : ["base"]).map((p) => `${id}.${p}`).join(", ")}, ${id}.lid`);
+  const parts = frame && c.frame_type === "simple" ? ["frame", "picture"]
+    : frame ? ["back", "picture", "frame", ...(c.frame_buttons !== false ? ["buttons"] : [])]
+    : [...(c.panels ? ["floor", "front", "back", "left", "right"] : ["base"]), "lid"];
+  form.note(`Parts: ${parts.map((p) => `${id}.${p}`).join(", ")}`);
   form.buttons(button("Add device to this case...", () => ctx.addPlacementDialog("device")),
     button("Add subassembly to this case...", () => ctx.addPlacementDialog("subassembly"), { disabled: !meta.subassemblies.length }));
+  // (A frame's sides are covered by its frame.)
+  if (!frame) decorationProps(form, ctx, id, "around", "outside");
 }
 
 function hingeProps(form, ctx, h) {
@@ -310,7 +350,8 @@ function placementProps(form, ctx, id) {
   const sections = [
     ["Margins", meta.stickSides[spec.surface].map((side) => [`margin_${side}`, type.commonParams[`margin_${side}`]]), true],
     ["Recess", type.recessParams.map((k) => [k, type.commonParams[k]]), true],
-    ["Settings", type.deviceParams, false],
+    // (A stamp's text and picture are shown as a decoration's, below.)
+    ["Settings", type.stamp ? type.deviceParams.filter(([n]) => !/^(text|picture)_/.test(n)) : type.deviceParams, false],
   ];
   for (const [heading, params, changesFootprint] of sections) {
     if (!params.length) continue;
@@ -337,6 +378,8 @@ function placementProps(form, ctx, id) {
       if (!name.startsWith("margin_")) form.note(label);
     }
   }
+
+  if (type.stamp) stampProps(form, ctx, spec);
 
   if (pv.cuts.length) {
     form.heading(spec.kind === "subassembly" || type.kind === "subassembly" ? "Cutouts" : "Connector cuts");
@@ -396,9 +439,16 @@ function surfaceProps(form, ctx, caseId, name, mount) {
 /** Text and a picture engraved into this surface's outside face. */
 function decorationProps(form, ctx, caseId, name, mount) {
   const c = ctx.design.cases.find((x) => x.id === caseId);
-  form.heading("Decoration");
-  form.note(`Text and a picture engraved into the ${name}'s outside face${mount === "outside" ? "" : " (whichever side you clicked)"}, ` +
-    "each optionally inlaid in other colours. The text is cut first; the picture fills the rest of the face.");
+  if (name === "around") {
+    form.heading("Band round the walls");
+    form.note("Text and a picture engraved in a band right round the outside of the walls, carrying on round the corners, " +
+      "each optionally inlaid in other colours. They're centred on the middle of the front; Across moves them round the " +
+      "case (to the right, as seen from outside). The band is on top of the walls' own decorations.");
+  } else {
+    form.heading("Decoration");
+    form.note(`Text and a picture engraved into the ${name}'s outside face${mount === "outside" ? "" : " (whichever side you clicked)"}, ` +
+      "each optionally inlaid in other colours. The text is cut first; the picture fills the rest of the face.");
+  }
   const layers = (c.decorations || {})[name] || {};
   const defaults = (kind) => Object.fromEntries(ctx.meta.decorationFields[kind].map((f) => [f[0], f[1]]));
   for (const [kind, title] of [["text", "Text"], ["image", "Picture"]]) {
@@ -406,27 +456,159 @@ function decorationProps(form, ctx, caseId, name, mount) {
     if (!(kind in layers)) continue;
     // The file holds only what differs from the defaults.
     const settings = { ...defaults(kind), ...layers[kind] };
-    for (const field of ctx.meta.decorationFields[kind]) {
-      const [fieldName, dflt, label, choices] = field;
-      const value = settings[fieldName];
-      const setValue = (v) => ctx.change({ op: "decoration_set", case: caseId, surface: name, kind, field: fieldName, value: v });
-      let widget;
-      if (choices) widget = form.combo(choices, value, setValue);
-      else if (typeof dflt === "string") {
-        widget = form.line(value, setValue);
-        if (fieldName === "file") {
-          const line = widget;
-          widget = [line, button("Browse...", async () => {
-            const chosen = await ctx.browsePicture(line.value);
-            if (chosen) setValue(chosen);
-          })];
-        }
-      } else {
-        const [lo, hi, step, decimals] = DECORATION_SPINS[fieldName] || [0, 1000, 0.5, 1];
-        const unit = fieldName === "angle" ? "deg" : ["across", "up", "size", "depth", "gap", "line_width", "detail"].includes(fieldName) ? "mm" : "";
-        widget = form.spin(value, setValue, { lo, hi, step, decimals, unit });
-      }
-      form.row(`  ${paramLabel(fieldName)}`, widget, label);
-    }
+    layerFields(form, ctx, kind, settings,
+      (fieldName, v) => ctx.change({ op: "decoration_set", case: caseId, surface: name, kind, field: fieldName, value: v }),
+      [caseId, name], () => ctx.picturePreview({ case: caseId, surface: name }));
   }
 }
+
+/** A stamp's text and picture: the same settings as a decoration's, kept
+in its parameters as text_<setting> and picture_<setting>. */
+function stampProps(form, ctx, spec) {
+  for (const [kind, title, prefix, note] of [["text", "Text", "text_", "Leave the text empty for none."],
+    ["image", "Picture", "picture_", "Leave the file empty for none."]]) {
+    form.heading(title);
+    form.note(note);
+    const settings = {};
+    for (const [name, dflt] of ctx.meta.decorationFields[kind]) settings[name] = prefix + name in spec.params ? spec.params[prefix + name] : dflt;
+    layerFields(form, ctx, kind, settings, (name, value) => ctx.change({ op: "set_param", id: spec.id, name: prefix + name, value }),
+      [spec.id], () => ctx.picturePreview({ placement: spec.id }));
+  }
+}
+
+/** The settings of a decoration's text or picture (`kind`), or a stamp's:
+`set(field, value)` changes one; a picture's colours are shown, from
+`preview()` (remembered by `owner` and the settings). */
+function layerFields(form, ctx, kind, settings, set, owner, preview) {
+  for (const field of ctx.meta.decorationFields[kind]) {
+    const [fieldName, dflt, label, choices] = field;
+    // (Shown with the picture's colours, below.)
+    if (fieldName === "palette" || fieldName === "mapping") continue;
+    const value = settings[fieldName];
+    const setValue = (v) => set(fieldName, v);
+    let widget;
+    if (choices) widget = form.combo(choices, value, setValue);
+    else if (typeof dflt === "string") {
+      widget = form.line(value, setValue);
+      if (fieldName === "file") {
+        const line = widget;
+        widget = [line, button("Browse...", async () => {
+          const chosen = await ctx.browsePicture(line.value);
+          if (chosen) setValue(chosen);
+        })];
+      }
+    } else {
+      const [lo, hi, step, decimals] = DECORATION_SPINS[fieldName] || [0, 1000, 0.5, 1];
+      const unit = fieldName === "angle" ? "deg" : ["across", "up", "size", "depth", "gap", "line_width", "detail"].includes(fieldName) ? "mm" : "";
+      widget = form.spin(value, setValue, { lo, hi, step, decimals, unit });
+    }
+    form.row(`  ${paramLabel(fieldName)}`, widget, label);
+  }
+  if (kind === "image" && settings.style !== "outline" && settings.file) pictureColours(form, owner, settings, set, preview);
+}
+
+// The last few colour previews, by what they were made from, so the panel
+// shows them straight away when it's redrawn.
+const previews = new Map();
+
+/** A canvas showing a {width, height, rgba} picture (RGBA, in base64). */
+function canvasOf(picture, cls) {
+  const canvas = el("canvas", { class: cls, width: picture.width, height: picture.height });
+  const bytes = Uint8ClampedArray.from(atob(picture.rgba), (c) => c.charCodeAt(0));
+  canvas.getContext("2d").putImageData(new ImageData(bytes, picture.width, picture.height), 0, 0);
+  return canvas;
+}
+
+function swatch(colour, title = colour) {
+  return el("span", { class: "swatch", style: `background:${colour}`, title });
+}
+
+/** A picture's colours: the picture and how it'll be printed side by side,
+the filaments (the palette), and which filament each of the picture's
+colours is printed in (the mapping). `set(field, value)` changes a setting. */
+function pictureColours(form, owner, settings, set, preview) {
+  form.heading("Picture colours");
+  const box = el("div", { class: "colours" });
+  form.add(box);
+  const key = JSON.stringify([owner, settings]);
+  const show = (answer) => {
+    if (!answer.preview) {
+      box.replaceChildren(el("div", { class: "note" }, answer.problem ? `Can't show its colours: ${answer.problem}` : ""));
+      return;
+    }
+    box.replaceChildren(...colourWidgets(answer.preview, settings, set));
+  };
+  if (previews.has(key)) {
+    show(previews.get(key));
+    return;
+  }
+  box.replaceChildren(el("div", { class: "note" }, "Working out its colours..."));
+  preview().then((answer) => {
+    if (previews.size > 20) previews.clear();
+    previews.set(key, answer);
+    show(answer);
+  }, (e) => show({ preview: null, problem: e.message }));
+}
+
+function colourWidgets(p, settings, set) {
+  const out = [];
+  out.push(el("div", { class: "colour-preview" },
+    el("figure", {}, canvasOf(p.original, "picture"), el("figcaption", {}, "The picture")),
+    el("figure", {}, canvasOf(p.result, "printed"), el("figcaption", {}, "Printed (checks: left out)"))));
+
+  // The filaments: the palette, or (with none) the picture's own colours.
+  const palette = String(settings.palette || "").split(/[\s,;]+/).filter(Boolean);
+  const setPalette = (colours) => set("palette", colours.join(" "));
+  out.push(el("div", { class: "note" }, palette.length
+    ? "Filaments (the palette): each of the picture's colours is printed in the nearest, unless you choose otherwise below."
+    : "Filaments: each of the picture's colours in a filament of its own. Use a palette to print it in the filaments you have."));
+  const filaments = el("div", { class: "filaments" });
+  if (palette.length) {
+    palette.forEach((c, i) => {
+      const input = el("input", { type: "color", value: /^#[0-9a-fA-F]{6}$/.test(c) ? c : "#000000", title: `Filament ${i + 1}` });
+      input.addEventListener("change", () => setPalette(palette.map((x, j) => (j === i ? input.value : x))));
+      // (Taking one out renumbers those after it, so the mapping starts again.)
+      const remove = button("×", async () => {
+        if (settings.mapping) await set("mapping", "");
+        await setPalette(palette.filter((_, j) => j !== i));
+      }, { cls: "small" });
+      remove.title = `Remove filament ${i + 1}`;
+      filaments.append(el("span", { class: "filament" }, el("b", {}, String(i + 1)), input, remove));
+    });
+    filaments.append(button("+", () => setPalette([...palette, "#808080"]), { cls: "small" }),
+      button("No palette", async () => {
+        if (settings.mapping) await set("mapping", "");
+        await set("palette", "");
+      }, { cls: "small" }));
+  } else {
+    p.filaments.forEach((c, i) => filaments.append(el("span", { class: "filament" }, el("b", {}, String(i + 1)), swatch(c))));
+    filaments.append(button("Use a palette", () => setPalette(p.found), { cls: "small" }));
+  }
+  out.push(filaments);
+
+  // The mapping: each of the picture's colours to a filament.
+  const entries = p.found.map((_, i) => (p.explicit[i] ? (p.assign[i] < 0 ? "-" : String(p.assign[i] + 1)) : "*"));
+  const setEntry = (i, v) => {
+    const next = entries.map((e, j) => (j === i ? v : e));
+    while (next.length && next[next.length - 1] === "*") next.pop();
+    set("mapping", next.join(" "));
+  };
+  const table = el("div", { class: "mapping" });
+  p.found.forEach((c, i) => {
+    const to = p.assign[i];
+    const options = [["*", p.explicit[i] ? "Default" : to < 0 ? "Default (left out)" : `Default (${to + 1})`],
+      ...p.filaments.map((f, j) => [String(j + 1), `${j + 1}  ${f}`]), ["-", "Leave out"]];
+    const select = el("select");
+    for (const [value, text] of options) {
+      const option = el("option", { value }, text);
+      if (value === entries[i]) option.selected = true;
+      select.append(option);
+    }
+    select.addEventListener("change", () => setEntry(i, select.value));
+    table.append(el("div", { class: "map-row" }, swatch(c, `The picture's colour ${i + 1}: ${c}`), el("span", {}, "→"), select,
+      to < 0 ? el("span", { class: "swatch left-out", title: "Left out" }) : swatch(p.filaments[to], `Filament ${to + 1}: ${p.filaments[to]}`)));
+  });
+  out.push(el("div", { class: "note" }, "The picture's colours, darkest first, and the filament each is printed in:"), table);
+  return out;
+}
+
