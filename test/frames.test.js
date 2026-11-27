@@ -198,3 +198,30 @@ test("a simple frame is just the frame, with a hook hole, and the picture's plat
   problems = withDevice.problems().map((p) => p[0]).join("\n");
   assert.match(problems, /hang: case f is a simple picture frame, which has no back/);
 });
+
+test("a frame's picture is the size asked for, whatever size the design's other cases are", () => {
+  const design = new Design({ cases: [new CaseSpec("f", { style: "Frame", height: 6.0, wall_thickness: 2.0, min_width: 120.0, min_depth: 80.0 }),
+    new CaseSpec("box", { style: "Square", height: 20.0, min_width: 250.0, min_depth: 200.0 })] });
+  design.relayout();
+  const [f, box] = design.cases;
+  assert.deepEqual([f.width, f.depth], [120.0, 80.0]);
+  assert.deepEqual([box.width, box.depth], [250.0, 200.0]);
+  // The window: the plate (the wall thickness out from the inside) less the lip over its edges.
+  const kase = cases.makeBox(f);
+  const [x0, y0, x1, y1] = kase.window();
+  assert.deepEqual([x1 - x0, y1 - y0], [120.0 + 2 * (2.0 - 5.0), 80.0 + 2 * (2.0 - 5.0)]);
+});
+
+test("the editor can ask a frame's picture's size, to match the frame's shape to it", async () => {
+  const { createApi, folders } = await import("../lib/api.js");
+  const fs = await import("node:fs");
+  const os = await import("node:os");
+  const path = await import("node:path");
+  const routes = createApi(folders(fs.mkdtempSync(path.join(os.tmpdir(), "tm-size-"))));
+  const design = Design.load(new URL("../designs/picture_frame.json", import.meta.url).pathname.replace(/^\/(\w:)/, "$1"));
+  const body = { design: design.to_dict(), case: "frame", surface: "top" };
+  const size = routes["POST /api/picture/size"]({ body });
+  assert.ok(size.width > 0 && size.height > 0, JSON.stringify(size));
+  body.surface = "bottom";
+  assert.match(routes["POST /api/picture/size"]({ body }).problem, /no picture/);
+});

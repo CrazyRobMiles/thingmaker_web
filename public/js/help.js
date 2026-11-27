@@ -66,7 +66,8 @@ const SECTIONS = (web) => [
     list(
       "The real parts are rebuilt a moment after every change, and shown in place of the layout (with see-through lids).",
       "Build writes the STL files to output/<design name>/ - print/ holds each part the way up to print it, " +
-        "assembled/ each part where it sits in the design. The status bar says whether the STL files match the design.",
+        "assembled/ each part where it sits in the design, and print/<design name>.3mf is a Bambu Studio project of them, " +
+        "each part on a plate of its own with its inlays in place, in their filaments. The status bar says whether the STL files match the design.",
       "Print parts shows the printable parts side by side: this design's, or any STL file or folder chosen with " +
         "File > Open STL files."),
   ]],

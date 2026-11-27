@@ -1,6 +1,6 @@
 {
   "name": "thingmaker-web",
-  "version": "1.11.0",
+  "version": "1.12.0",
   "description": "Design 3D-printable enclosures for electronics in a web browser - a Node.js port of thingmaker",
   "type": "module",
   "main": "server.js",
@@ -27,6 +27,7 @@
   "license": "MIT",
   "dependencies": {
     "fast-png": "8.0.0",
+    "fflate": "0.8.2",
     "jpeg-js": "0.4.4",
     "manifold-3d": "3.5.4",
     "omggif": "1.0.10",

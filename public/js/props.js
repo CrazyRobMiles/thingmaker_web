@@ -2,6 +2,8 @@
 // sent to the server as an edit (ctx.change).
 import { typeSelect } from "./groups.js";
 import { fmtG, roundHalfEven } from "/lib/numbers.js";
+// (A size worked out from others, rounded to the micrometre.)
+const roundTo = (v) => roundHalfEven(v, 6);
 
 export const SNAP = 0.5; // mm - drag positions snap to this, and X/Y step by it
 
@@ -220,8 +222,35 @@ function caseProps(form, ctx, c) {
         "2.8mm holes in the blocks.",
     }));
   }
-  form.row("Inside width x depth", `${fmtG(c.width)} x ${fmtG(c.depth)} mm`,
-    "Worked out from what's placed in it: every case gets the width and depth the largest one needs, or the largest minimum.");
+  if (frame) {
+    // The picture's size: the window in the frame's front, its plate's edges
+    // (the wall thickness out from the inside) less the lip over them. It's
+    // kept as the case's minimum inside width and depth.
+    const border = c.wall_thickness - c.frame_lip;
+    const tip = "The size of the picture you see, in the window in the frame's front (mm). It's bigger if what's on the " +
+      "back needs more room.";
+    form.row("Picture width", form.spin(roundTo(c.width + 2 * border), (v) => set("min_width", Math.max(0, roundTo(v - 2 * border))),
+      { lo: 10, hi: 2000, unit: "mm" }), tip);
+    form.row("Picture height", form.spin(roundTo(c.depth + 2 * border), (v) => set("min_depth", Math.max(0, roundTo(v - 2 * border))),
+      { lo: 10, hi: 2000, unit: "mm" }), tip);
+    const picture = c.decorations.top && c.decorations.top.image;
+    form.buttons(button("Match the picture's shape", async () => {
+      const size = await ctx.pictureSize(id, "top");
+      if (size.problem) return ctx.message("Match the picture's shape", `Can't read the picture: ${size.problem}`);
+      // The width kept; the height to suit: at zoom 1 the picture then fills the window.
+      const height = ((c.width + 2 * border) * size.height) / size.width;
+      set("min_depth", Math.max(0, roundTo(height - 2 * border)));
+    }, { disabled: !(picture && picture.file) }));
+    if (picture && picture.file && Math.abs(Math.sin((picture.angle * Math.PI) / 180)) > 1e-6) {
+      form.note("(The picture is turned: this matches its shape as it is in the file, unturned.)");
+    }
+    const outside = 2 * (c.wall_thickness + meta.fitGap + c.frame_width);
+    form.row("Outside", `${fmtG(roundTo(c.width + outside))} x ${fmtG(roundTo(c.depth + outside))} mm`,
+      "The frame's size, outside edge to outside edge.");
+  } else {
+    form.row("Inside width x depth", `${fmtG(c.width)} x ${fmtG(c.depth)} mm`,
+      "Worked out from what's placed in it: every case gets the width and depth the largest one needs, or the largest minimum.");
+  }
   // (A frame's parts are its back, picture and frame.)
   const frameLabels = {
     height: "Space behind the picture (mm)", wall_thickness: "Back's wall thickness (mm)", base_thickness: "Back thickness (mm)",
@@ -230,6 +259,7 @@ function caseProps(form, ctx, c) {
   for (let [name, , label] of meta.caseFields.slice(1)) {
     if (name === "width" || name === "depth") continue;
     if (frame && (name === "lid_height" || name === "join_drop")) continue; // (no skirt on a frame's plate)
+    if (frame && (name === "min_width" || name === "min_depth")) continue; // (set as the picture's size, above)
     // Only Rounded and Bevelled cases, and frames that aren't flat, have shaped edges.
     if (name === "edge" && !meta.edgeStyles.includes(c.style) && !(frame && c.frame_profile !== "flat")) continue;
     if (frame && frameLabels[name]) label = frameLabels[name];
@@ -246,7 +276,7 @@ function caseProps(form, ctx, c) {
     form.row(name === "edge" ? "Edge" : label.split(" (mm)")[0], form.spin(c[name], (v) => set(name, v),
       { lo: minimum ? 0 : 0.5, hi: 2000 }), label);
   }
-  form.note("Width and depth follow what's placed in the cases (all cases share them); a minimum of 0 means just fit it.");
+  if (!frame) form.note("Width and depth follow what's placed in the cases (all cases but picture frames share them); a minimum of 0 means just fit it.");
   const driver = ctx.design.hinges.find((h) => h.cases[1] === id);
   if (driver) form.note(`Placed by hinge ${driver.id} (see its open angle).`);
   else {

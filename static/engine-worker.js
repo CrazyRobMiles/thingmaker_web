@@ -24,6 +24,7 @@ async function prepare(route, body, query) {
     case "POST /api/save":
     case "POST /api/template":
     case "POST /api/picture/preview":
+    case "POST /api/picture/size":
       await loadPictures(body.design);
       break;
     case "POST /api/edit":

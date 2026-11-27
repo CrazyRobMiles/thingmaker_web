@@ -107,6 +107,19 @@ Help menu: **Editor help (F1)**, a pop-up guide to all this
 Build output goes to `output/<design file name>/`:
 
 - `print/<part>.stl` holds each part in its printing orientation.
+- `print/<design name>.3mf` is a Bambu Studio project of the same parts,
+  ready to slice: each printed part is a model of its own, on a plate of its
+  own, with its decorations' and stamps' inlays already in place as parts of
+  it. The case parts are set to filament 1, and each inlay to the filament
+  (AMS slot) its text or picture's **filament** setting gives - for a
+  picture in several colours, one number for each of its colours in turn
+  (e.g. `2 3 4`). Without that, each colour gets a filament of its own
+  from 2 up, so inlays of the same colour share one. A plate that needs
+  more than an AMS's 4 filaments, or a part too big for a 256mm bed (X1,
+  P1, A1), is a warning. The project is set up for a P1S with a 0.4mm
+  nozzle and four PLA filaments (`lib/bambu-settings.js`); change the
+  printer and filaments in Bambu Studio as usual. Each Build replaces this
+  file, so save a project you've changed in the slicer under another name.
 - `assembled/<part>.stl` holds each part where it sits in the assembled design.
 - `design.json` is the design as built; `manifest.json` records each part's
   solid count, volume and validity, and the hinge check.
@@ -671,6 +684,17 @@ are. The plate and the back drop into the frame from behind. Devices go on
 the picture (the top) or the back (the bottom) - a **Keyhole hanger** on
 the back hangs it on a wall - not the sides, which the frame covers. The
 example `designs/picture_frame.json` is a landscape in five colours.
+
+The picture's size is set in the editor as **Picture width** and **Picture
+height**: the window in the frame's front. They're kept as the case's
+`min_width` and `min_depth` (the plate's inside, less twice the wall
+thickness, plus twice the lip): the picture is
+`min_width + 2 x (wall_thickness - frame_lip)` wide, bigger only if what's
+on the back needs more room. A frame is its own size: the other cases in the
+design, which share their width and depth, don't change it.
+**Match the picture's shape** keeps the picture's width and sets its height
+to the picture file's proportions, so at zoom 1 the picture fills the window
+exactly (it uses the file's shape unturned, whatever the picture's angle).
 
 A **simple** frame (`frame_type: "simple"`; the default is `full`, as
 above) is just two parts: `<case>.frame` and `<case>.picture`. The plate

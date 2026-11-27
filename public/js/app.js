@@ -380,6 +380,9 @@ function propsContext() {
     browsePicture,
     // (Of a surface's decoration, {case, surface}, or a stamp's, {placement}.)
     picturePreview: (which) => api.post("/api/picture/preview", { design: state.design, ...which }),
+    // (In pixels, {width, height} or {problem}, of a case's surface's picture.)
+    pictureSize: (caseId, surface) => api.post("/api/picture/size", { design: state.design, case: caseId, surface }),
+    message: (title, text) => dialogs.message(title, text),
   };
 }
 
