@@ -233,7 +233,9 @@ function caseProps(form, ctx, c) {
       { lo: 10, hi: 2000, unit: "mm" }), tip);
     form.row("Picture height", form.spin(roundTo(c.depth + 2 * border), (v) => set("min_depth", Math.max(0, roundTo(v - 2 * border))),
       { lo: 10, hi: 2000, unit: "mm" }), tip);
-    const picture = c.decorations.top && c.decorations.top.image;
+    // (A case without decorations has none in its dict.)
+    const top = (c.decorations || {}).top;
+    const picture = top && top.image;
     form.buttons(button("Match the picture's shape", async () => {
       const size = await ctx.pictureSize(id, "top");
       if (size.problem) return ctx.message("Match the picture's shape", `Can't read the picture: ${size.problem}`);
