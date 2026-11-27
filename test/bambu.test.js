@@ -147,3 +147,15 @@ test("Build writes the project beside the print STLs, and the manifest says what
   assert.equal(manifest.project.filaments["main.base"], 1);
   assert.equal(projectName({ name: 'a/b: "c"' }), "a_b_ _c_.3mf");
 });
+
+test("a part of hundreds of thousands of triangles (a big picture's) goes in the project", () => {
+  kernel.scope(() => {
+    // A plate rippled all over, so it stays that many triangles when it's tidied.
+    const plate = kernel.makeBox(120.0, 120.0, 2.0).bent(([x, y, z]) => [x, y, z + 0.3 * Math.sin(x * 3) * Math.cos(y * 3)], 0.25);
+    const design = new Design({ name: "Big", cases: [] });
+    const made = bambu.project(design, { big: plate });
+    const { meshes } = read(made.bytes);
+    const [, tris] = Object.values(meshes)[0];
+    assert.ok(tris.length > 200000, `${tris.length} triangles`);
+  });
+});
